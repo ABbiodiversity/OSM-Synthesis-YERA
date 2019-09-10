@@ -1,0 +1,238 @@
+---
+title: "Yellow Rail in Alberta's Oil Sands Region"
+author: "Richard Hedley, Marcus Becker, Erin Bayne"
+date: "September 6, 2019"
+output:
+  html_document:
+    highlight: zenburn
+    math_jax: null
+    self_contained: yes
+    theme: readable
+    toc: yes
+    toc_depth: 4
+    toc_float: yes
+  pdf_document:
+    toc: yes
+  word_document:
+    toc: yes
+    toc_depth: '4'
+fontsize: 10.5pt
+urlcolor: blue
+always_allow_html: yes
+---
+
+```{r setup, include=TRUE, echo=FALSE, message=FALSE, warning=FALSE, eval=TRUE}
+
+library(tidyverse)
+library(knitr)
+library(here)
+library(sf)
+library(raster)
+library(leaflet)
+library(leaflet.extras)
+library(RColorBrewer)
+
+# Set global options for figures 
+knitr::opts_chunk$set(out.width='70%', fig.align = "center")
+
+# Import data
+
+# Preferred habitat raster (LAPR)
+ras_prefhab <- raster(here("./data/base/spatial/yera_prefhab_250m.tif"))
+# Alberta's OSR
+sf_osr <- st_read(here("./data/base/spatial/AB_OSR.shp"), quiet = TRUE)
+
+```
+
+# Introduction
+
+Yellow Rails are one of the most secretive and poorly known bird species in North America. They are migratory, spending the months of May until September at their breeding grounds in Canada, and the rest of the year in wetlands along the southeast coast of the United States. The remoteness of their wetland breeding habitats and their nocturnal activity patterns render them poorly sampled by standard bird monitoring efforts. A lack of information regarding distribution, population size, population trends, and basic biology has been the primary reason for conservation concern. The purpose of this report is to summarize the current available knowledge regarding Yellow Rails in the OSR and to highlight priorities for research and management.
+
+# At Issue
+
+Current knowledge of the breeding habits of Yellow Rails within the OSR suggests that they primarily breed in graminoid fens, with breeding territories characterized by:
+
++ 0 to 30-cm of standing water;
++ Dense cover of grasses and sedges.
+
+The two main threats facing the Yellow Rail in the OSR are:
+
++ the direct effects of surface mining, in which their habitats can be removed;
++ the indirect effects of altered hydrology due to development, which may affect the suitability of habitat well beyond the footprint of development.
+
+# Management Goal
+
+Yellow Rail abundance and occupancy can fluctuate from year to year at a wetland, which is thought to be driven by inter-annual variation in water levels. Nevertheless, some wetlands in the OSR are reliably occupied by large numbers of YelloW Rails every year (> 50 individuals, E.Bayne unpublished). Management goals include:
+
++ Identify key YelloW Rail breeding sites and prioritize these for conservation;
++ Monitor and mitigate effects of development on Yellow Rail at three mine leases closest to McLelland Lake as required by the Environmental Protection and Enhancement Act.
+
+# Management Strategies
+
+1. **Identify additional key breeding sites**
+
+Currently, Yellow Rails have been found at approximately 200 survey points in the OSR. A habitat map constructed from these data can be used to predict additional breeding sites and estimates population sizes and threats. Predicted sites should be surveyed when possible to verify presence/absence. Regions that are potentially important but which have not been thoroughly surveyed include the wetlands surrounding Lake Clair in Wood Buffalo National Park, the entire "western panhandle" of the OSR, and most wetlands not within 10-km of a road.
+
+2. **Refine population estimates regionally and provincially**
+
+Existing population estimates put the population of Yellow Rail at 10,000 - 25,000 individuals globally. The population in Alberta has been estimated at 500 pairs. However, this is likely an underestimate, because recent surveys have found nearly 300 males (with an assumed equal number of females) in the surveyed areas of the OSR, which itself covers only about 20% of the province (E.Bayne, unpublished data). The degree of underestimation remains unknown and is the focus of ongoing work.
+
+*Discuss draft of Hedley et al (in prep) here?*
+
+3. **Track changes to regional population numbers in the face of development**
+
+As development progresses, continue monitoring efforts to examine effects on population numbers.
+
+4. **Identify, encourage, and facilitate conservation of key sites**
+
+Identification of new sites can be accomplished by visiting sites of high predicted habitat suitability to confirm presence/absence of Yellow Rails. In particular, visiting areas with large expanses of predicted suitable habitat is important, as these locations are likely to harbour the largest populations of Yellow Rails.
+
+5. **Conduct research on the movement ecology of this species**
+
+Yellow Rails migrate from Canada to the southeastern United States each year. Beyond this, little is known about their movements. The consensus view regarding the conservation of migratory species is that successful conservation efforts must focus on the full annual cycle. 
+
+Populations in Quebec are thought to undertake a molt migration in the late summer, moving dozens of kilometers from their breeding grounds to molt. It is not known if Yellow Rails in Alberta do the same, but if they do, it may mean their habitat needs extend well beyond their breeding territories.
+
+Yellow Rails are also notorious for their lack of site fidelity. Rates of recapture of the same individual in successive years are <1% (K. Drake, Pers. Comm.), suggesting that the rails move around between years. This behaviour is thought to have evolved as an adaptation to ephemeral wetland habitats, which can become unsuitable if water levels are too high or too low. The low (<1%) interannual recapture rate is a practical barrier to long-distance tracking, since most tracking devices require recapture. Those that remotely transmit data via satellite are currently too large to attach to Yellow Rails. An intermediate option is a GPS tag with the option of data download via short-range radio receivers, and this option is currently being explored.
+
+6. **Assess threats posed by the OSR (direct effects)**
+
+Several oil sands mines abut or overlap significant patches of potential Yellow Rail habitat (Figure). Research is ongoing to place these threats within regional and global contexts. This is proceeding in two main ways: first, by continuing to survey suitable habitat on and near leases to determine if the predicted habitat is actually occupied; and second, by estimating the percentage of predicted habitat that occurs on, near, and off lease, and using these percentages to estimate proportion of the regional and global population that are threatened by development.
+
+7. **Assess sensitivity of Yellow Rails to changes in hydrology (indirect effects)**
+
+Existing water depth data will be used to examine how Yellow Rails respond to changes in water depth between years, and findings can be used to develop better mitigation strategies. 
+
+# Methods
+
+The status of Yellow Rails in the oilsands region has been poorly understood historically because they are not well surveyed by standard monitoring efforts. In 2012, the now-defunct Ecological Monitoring Committee for the Lower Athabasca began targeted surveys for Yellow Rails throughout the oilsands region. In the first year, human point counts and ARUs were both employed in surveys, but it was quickly determined that ARUs are as good or better than humans at detecting Yellow Rails, and have the added benefit that they do not require humans to venture to remote areas at night. ARUs have been the sole survey method since 2013. 
+
+Yellow Rails are surveyed through listening to recordings made at 2:00am during peak breeding season, which runs from roughly May 20 to July 15 each year. At 2:00am, we have found that Yellow Rails are highly vocal and easily detected, such that a 1-minute survey has a ~50% probability of detecting a rail, given that one is present. Generally, we listen to at least four 2:00am recordings per station; conducting multiple surveys per station allows estimation of both occupancy rate and detection probability via occupancy analysis.
+
+Just two Yellow Rails were detected at 302 survey stations in 2012 (0.007 individuals per sation); these findings initiated an iterative process whereby detections were used to refine our understanding of habitat preferences, which was then used to identify additional sites to survey. As evidence of the effectiveness of this process, at 102 stations that were visited for the first time in 2018 and had high predicted suitability, we found 22 Yellow Rail individuals (0.22 individuals per station, more than 30 times the rate of detections in 2012).
+
+Once a wetland has been selected for surveys, multiple ARUs are usually placed within the wetland. The most common deployment scheme is to place five ARUs in a square with 600m edges: one unit is placed at each corner, and one in the middle. Variations on this theme have been used, with the general intent of placing ARUs sufficiently far (>500m) from their nearest neighbours to increase spatial independence.
+
+In addition to visiting new sites, we have resurveyed previous survey locations, which will allow an assessment of inter-annual variation in site occupancy and analysis of trends over time. As of 2017, 143 survey stations with at least one Yellow Rail detection had been surveyed in multiple years.
+
+# Planning Tools
+
+Surveys conducted for Yellow Rails since 2012 have been used to produce a map of preferred habitat across the LAPR, and to assess the threats to regionally important habitat in the Mineable Region. 
+
+## Identify Preferred Habitat
+
+This landscape map identifies Yellow Rail preferred habitat in a portion of the Lower Athabasca Planning Region (LAPR). Four wetland classification GIS layers were combined into a single GIS layer (Hedley et al., in prep). Quality of Yellow Rail habitat was rated on a scale from 0 to 8, with higher numbers indicating a higher probability of detecting a Yellow Rail. The combined layer more accurately predicted Yellow Rail habitat than any of the original four layers in isolation. It is the most predictive Yellow Rail habitat map currently available.
+
+<br>
+```{r pref-habitat, include=TRUE, echo=FALSE, message=FALSE, warning=FALSE, eval=TRUE, out.width="100%", fig.height=9}
+
+# Define palette
+pal_rev <- rev(brewer.pal(8, "RdBu"))
+pal1 <- colorNumeric(palette = pal_rev, 
+                         domain = values(ras_prefhab), 
+                         na.color = "transparent")
+
+# Leaflet map
+map_prefhab <- sf_osr %>%
+  st_transform("+init=epsg:4326") %>%
+  leaflet() %>%
+  addTiles() %>%
+  addProviderTiles("Stamen.TerrainBackground") %>%
+  addFullscreenControl() %>%
+  addResetMapButton() %>%
+  addScaleBar(position = "bottomleft",
+              options = scaleBarOptions(imperial = FALSE)) %>%
+  setView(lng = -111.64, lat = 56.31, zoom = 7) %>%
+  
+  # Add OSR polygon
+  addPolylines(color = "#0a0909", weight = 2, smoothFactor = 0.2, 
+               opacity = 3.0, fill = FALSE, 
+               group = "Alberta Oil Sands Region Boundary") %>%
+
+  # Add raster layer
+  addRasterImage(ras_prefhab, colors = pal1, opacity = 1) %>%
+  
+  # Add legend
+  addLegend(pal = pal1, values = values(ras_prefhab), opacity = 1,  
+            title = "Habitat Suitability", position = "bottomright") %>%
+  
+  # Layers Control
+  addLayersControl(overlayGroups = "Alberta Oil Sands Region Boundary",
+                   options = layersControlOptions(collapsed = FALSE)) %>%
+  
+  hideGroup("Alberta Oil Sands Region Boundary")
+
+map_prefhab
+
+```
+<br>
+
+## Regionally Important Habitat
+
+### Known Breeding Sites
+
+Recent surveys have highlighted the tendency for Yellow Rails to live at high densities in specific large wetlands. In the LAPR survey area, nearly 90% of YelloW Rail detections have ocurred in just seven large wetlands. Outside of these seven wetlands, only 37 individuals have been detected and no other wetland has so far been found to contain more than 10 individuals[^1].
+
+[^1]: Note however that there are wetlands with confirmed populations of YelloW Rails deserving of more thorough surveys.
+
+```{r include=TRUE, echo=FALSE, message=FALSE, warning=FALSE, eval=TRUE}
+
+
+
+```
+
+### Threats to Known Breeding Sites
+
+The two most important known breeding sites for Yellow Rails in the OSR are the wetlands on the east and west sides of McLelland Lake. These two interconnected fen complexes are notable for containing a vast area of suitable habitat and large numbers of breeding individuals each year (about 40% of the confirmed population in the OSR). Plans are to partially remove this habitat via oil sands mining.
+
+There are several oil sands operations that overlap Yellow Rail habitat, including one lease to the west of McLelland Lake and 5 leases to the east.
+
+#### West of McLelland Lake
+
+The wetland complex on the western edge of McLelland Lake overlaps Suncor’s Fort Hills lease. About 55% of the suitable habitat in the area lies within the Fort Hills lease. Of the 53 birds detected on bioacoustic surveys in western McLelland Lake since 2012, 35 (66%) were within the proposed footprint of the Fort Hills mine.
+
+#### East of McLelland Lake
+
+The wetland complex on the eastern edge of McLelland Lake overlaps five different leases. About 64% of predicted suitable habitat lies within the boundaries of a lease. Although the habitat model predicts high quality habitat on all five leases, Yellow Rails have only been detected in the northeastern section of the wetland in recent surveys. Large areas of the wetland complex have not been surveyed. 
+
+Results to-date show:
+
++ Jackpine Phase 2 and Imperial Kearl sites overlap with predicted high quality habitat, and rails have been detected in recent surveys. Of the 65 rails detected in eastern McLelland Lake since 2012, 30% were in the proposed footprint of the Jackpine Phase 2 and Imperial Kearl leases. 
+
++ Muskeg River overlaps with predicted high quality habitat. Rails have not been detected in recent surveys but have been detected historically. 
+
++ Aurora Mine North and Jackpine Phase 2 both overlap with predicted high quality habitat, but rails have not been detected to-date.  
+
+```{r include=TRUE, echo=FALSE, message=FALSE, warning=FALSE, eval=TRUE}
+
+
+
+```
+
+It is important to emphasize that this species appears to be sensitive to changes in water levels[1,6], so even modest changes in hydrology may render habitat unsuitable well beyond the footprint of a development. Across the McLelland Lake complex as a whole, changes to hydrology may pose as big a threat as direct habitat removal, since most of the confirmed Yellow Rail individuals were found off lease. Moreover, the entire fen is interconnected, so activities in one area may affect habitat suitability in another.
+
+# Conclusions
+
+The boreal forest of Alberta was formerly considered an area of secondary importance for Yellow Rails. This is no longer the case, as bioacoustic surveys conducted in the past decade have significantly increased the number of confirmed Yellow Rails in the OSR. It now seems likely that this region hosts a significant proportion of the global population of Yellow Rails.
+
+Yellow Rails are not evenly distributed across the boreal forest, but are concentrated in large wetland complexes. Conservation efforts should focus on minimizing the effects of development within these important habitats. New tools are available that can help visualize Yellow Rail occurrence and identify breeding sites for surveys.
+
+Placing the threat in a broader regional and global context is also important. Regionally, surveys should be conducted in more large wetland complexes with high predicted habitat suitability to identify new significant breeding sites or confirm their absence. Globally, efforts should be made to refine population estimates by synthesizing information across known breeding hotspots in each province.
+
+# References 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
