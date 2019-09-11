@@ -11,6 +11,7 @@ output:
     toc: yes
     toc_depth: 4
     toc_float: yes
+    number_sections: true
   pdf_document:
     toc: yes
   word_document:
@@ -20,6 +21,12 @@ fontsize: 10.5pt
 urlcolor: blue
 always_allow_html: yes
 ---
+
+<style>
+    body .main-container {
+        max-width: 1250px;
+    }
+</style>
 
 ```{r setup, include=TRUE, echo=FALSE, message=FALSE, warning=FALSE, eval=TRUE}
 
@@ -31,16 +38,26 @@ library(raster)
 library(leaflet)
 library(leaflet.extras)
 library(RColorBrewer)
+library(crosstalk)
 
 # Set global options for figures 
 knitr::opts_chunk$set(out.width='70%', fig.align = "center")
 
-# Import data
+```
+
+```{r data, include=TRUE, echo=FALSE, message=FALSE, warning=FALSE, eval=TRUE}
+
+# Spatial
 
 # Preferred habitat raster (LAPR)
 ras_prefhab <- raster(here("./data/base/spatial/yera_prefhab_250m.tif"))
 # Alberta's OSR
 sf_osr <- st_read(here("./data/base/spatial/AB_OSR.shp"), quiet = TRUE)
+
+# Site metadata
+df_meta <- read_csv(here("./data/lookup/yera_ss-meta_2013-18.csv"))
+# YERA occupancy
+df_occupy <- read_csv(here("./data/processed/yera_occupy_2013-18.csv"))
 
 ```
 
@@ -115,6 +132,71 @@ Once a wetland has been selected for surveys, multiple ARUs are usually placed w
 
 In addition to visiting new sites, we have resurveyed previous survey locations, which will allow an assessment of inter-annual variation in site occupancy and analysis of trends over time. As of 2017, 143 survey stations with at least one Yellow Rail detection had been surveyed in multiple years.
 
+<br>
+<br>
+```{r include=TRUE, echo=FALSE, message=FALSE, warning=FALSE, eval=TRUE, out.width="100%", fig.height=9}
+
+df_occ_summary <- df_occupy %>%
+  mutate(occupied = ifelse(occupied == 1, TRUE, FALSE)) %>%
+  group_by(ss, year) %>%
+  summarise(yera_occupied = ifelse(any(occupied), TRUE, FALSE)) %>%
+  ungroup() %>%
+  mutate(yera_occupied = as.factor(ifelse(is.na(yera_occupied), "NOT SURVEYED", yera_occupied)),
+         yera_occupied = fct_relevel(yera_occupied, "TRUE")) %>%
+  left_join(df_meta, by = "ss") %>%
+  rename(lat = latit, long = longit)
+
+pal1 <- colorFactor(palette = c("yellow", "#7f2704", "grey50"), 
+                   domain = df_occ_summary$yera_occupied)
+
+# Convert to SharedData object for crosstalk
+shared_ss <- SharedData$new(df_occ_summary)
+
+bscols(widths = c(3,3),
+  filter_checkbox("yera_occupied", "Yellow Rail Detection", shared_ss, ~yera_occupied),
+  filter_select("year", "Survey Year", shared_ss, ~year, multiple = FALSE),
+  # Will try to figure out a way to have a default selection.
+  filter_checkbox("mineable", "Mineable", shared_ss, ~ifelse(mineable == 1, "Yes", "No")),
+  filter_checkbox("mclelland", "McLelland Lake", shared_ss, ~mclelland)
+)
+
+sf_osr %>%
+  st_transform("+init=epsg:4326") %>%
+  leaflet() %>%
+  addTiles() %>%
+  addProviderTiles("Stamen.Terrain") %>%
+  addProviderTiles("Esri.WorldImagery", group = "Satellite Imagery") %>%
+  addFullscreenControl() %>%
+  addResetMapButton() %>%
+  addScaleBar(position = "bottomleft",
+              options = scaleBarOptions(imperial = FALSE)) %>%
+  
+  # Add OSR polygon
+  addPolylines(color = "#0a0909", weight = 2, smoothFactor = 0.2, 
+               opacity = 3.0, fill = FALSE, 
+               group = "Alberta Oil Sands Region Boundary") %>%
+  
+  # Add markers for survey stations
+  addCircleMarkers(data = shared_ss, color = ~pal1(yera_occupied),
+                   stroke = FALSE, fillOpacity = 0.8,
+                   popup = paste("Site Code:", "<b>", df_occ_summary$ss)) %>%
+  
+  # Add legend
+  addLegend(data = shared_ss, pal = pal1, values = ~yera_occupied,
+            position = "bottomright", opacity = 1.0,
+            title = "Yellow Rail Detection") %>%
+  
+  # Add layers control
+  addLayersControl(overlayGroups = c("Alberta Oil Sands Region Boundary",
+                                     "Satellite Imagery"),
+                   options = layersControlOptions(collapsed = FALSE)) %>%
+  
+  hideGroup("Satellite Imagery")
+
+
+```
+<br>
+
 # Planning Tools
 
 Surveys conducted for Yellow Rails since 2012 have been used to produce a map of preferred habitat across the LAPR, and to assess the threats to regionally important habitat in the Mineable Region. 
@@ -137,7 +219,7 @@ map_prefhab <- sf_osr %>%
   st_transform("+init=epsg:4326") %>%
   leaflet() %>%
   addTiles() %>%
-  addProviderTiles("Stamen.TerrainBackground") %>%
+  addProviderTiles("Stamen.Terrain") %>%
   addFullscreenControl() %>%
   addResetMapButton() %>%
   addScaleBar(position = "bottomleft",
