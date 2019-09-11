@@ -55,7 +55,8 @@ df_doy <- ls_yera[[3]] %>%
 
 df_mclelland <- ls_yera[[16]] %>%
   select(ss, mclelland = McLelland) %>%
-  na_if("<Null>")
+  na_if("<Null>") %>%
+  mutate(mclelland = tolower(mclelland))
 
 # Site metadata
 df_meta <- ls_yera[[4]] %>%
@@ -64,11 +65,18 @@ df_meta <- ls_yera[[4]] %>%
   mutate(lapr = 1) %>%
   left_join(df_mclelland, by = "ss")
 
+# Join site metadata to df_occupy
+df_occupy_region <- df_occupy %>%
+  left_join(df_meta, by = "ss") %>%
+  mutate(region = ifelse(mineable == "1", "mineable", "unmineable"),
+         region = ifelse(!is.na(mclelland), mclelland, region)) %>%
+  select(ss:occupied, region)
+
 #-------------------------------------------------------------------------------
 
 # Export processed data
 
-write_csv(df_occupy, "./data/processed/yera_occupy_2013-18.csv")
+write_csv(df_occupy_region, "./data/processed/yera_occupy_2013-18.csv")
 
 write_csv(df_doy, "./data/processed/yera_doy_2013-18.csv")
 
