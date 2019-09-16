@@ -70,7 +70,9 @@ df_occupy_region <- df_occupy %>%
   left_join(df_meta, by = "ss") %>%
   mutate(region = ifelse(mineable == "1", "mineable", "unmineable"),
          region = ifelse(!is.na(mclelland), mclelland, region)) %>%
-  select(ss:occupied, region)
+  select(ss:occupied, region) %>%
+  # Correction to one site (per R.Hedley)
+  mutate(occupied = ifelse(ss == "Y:216@5:CT" & year == "2017", NA, occupied))
 
 #-------------------------------------------------------------------------------
 
