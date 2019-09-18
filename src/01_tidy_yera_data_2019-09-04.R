@@ -86,8 +86,32 @@ write_csv(df_meta, "./data/lookup/yera_ss-meta_2013-18.csv")
 
 #-------------------------------------------------------------------------------
 
+# New data from Erin - 2019/09/18
 
+# Define file path
+path_new <- "./data/base/3AM-YERA-data.xlsx"
 
+# Read in Erin's YERA data
+ls_yera_new <- path_new %>%
+  excel_sheets() %>%
+  set_names() %>%
+  map(read_excel, path = path_new)
+
+# Create new Occupy df
+df_occupy_new <- ls_yera_new[[1]] %>%
+  select(ss:Y20184) %>%
+  na_if(".") %>%
+  gather(key = "year", value = "occupied", Y20131:Y20184) %>%
+  separate(year, into = c("year", "sample"), sep = -1, remove = TRUE) %>%
+  mutate(year = str_remove(year, "Y")) %>%
+  left_join(df_meta, by = "ss") %>%
+  mutate(region = ifelse(mineable == "1", "mineable", "unmineable"),
+         region = ifelse(!is.na(mclelland), mclelland, region)) %>%
+  select(ss:occupied, region)
+
+# Export processed data (new)
+
+write_csv(df_occupy_new, "./data/processed/yera_occupy_2013-18_new.csv")
 
 
 
