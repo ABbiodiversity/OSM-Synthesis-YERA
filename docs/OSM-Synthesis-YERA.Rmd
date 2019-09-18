@@ -12,6 +12,7 @@ output:
     toc_depth: 4
     toc_float: yes
     number_sections: true
+    code_folding: hide
   pdf_document:
     toc: yes
   word_document:
@@ -134,7 +135,7 @@ In addition to visiting new sites, we have resurveyed previous survey locations,
 
 <br>
 <br>
-```{r include=TRUE, echo=FALSE, message=FALSE, warning=FALSE, eval=TRUE, out.width="100%", fig.height=9}
+```{r include=TRUE, echo=TRUE, message=FALSE, warning=FALSE, eval=TRUE, out.width="100%", fig.height=9}
 
 df_occ_summary <- df_occupy %>%
   mutate(occupied = ifelse(occupied == 1, TRUE, FALSE)) %>%
@@ -193,6 +194,145 @@ sf_osr %>%
   
   hideGroup("Satellite Imagery")
 
+
+```
+<br>
+
+# Results
+
+These results were generated using the `unmarked` package.
+
+## Occupancy
+
+```{r occ-lapr, include=TRUE, echo=TRUE, message=FALSE, warning=FALSE, eval=TRUE, out.width="70%"}
+
+# Load multi-year occupancy modeling output
+load(here("./beta/results/MultiYearOccupancyOutput.RData"))
+
+df_output_occ <- OUT %>%
+  map(~ data.frame(.x[1])) %>%
+  map_dfr(~ rownames_to_column(.x[1:6], var = "status"), .id = "region") %>%
+  gather(key = "year", value = "occupancy", Occupancy.1:Occupancy.6) %>%
+  mutate(year = case_when(
+    year == "Occupancy.1" ~ "2013",
+    year == "Occupancy.2" ~ "2014",
+    year == "Occupancy.3" ~ "2015",
+    year == "Occupancy.4" ~ "2016",
+    year == "Occupancy.5" ~ "2017",
+    year == "Occupancy.6" ~ "2018"),
+         region = case_when(
+    region == "East" ~ "Eastern McClelland Fen",
+    region == "West" ~ "Western McClelland Fen",
+    region == "LAPR" ~ "Lower Athabasca Region",
+    region == "Mine" ~ "Mineable Areas",
+    region == "NoMine" ~ "Non-Mineable Areas"
+  ))
+
+plot1 <- df_output_occ %>%
+  filter(status == "occupied",
+         region == "Lower Athabasca Region") %>%
+  mutate(year = as.numeric(year)) %>%
+  ggplot(mapping = aes(x = year, y = occupancy)) +
+  geom_point(size = 3.5, color = "cornflowerblue") +
+  geom_line(color = "cornflowerblue") + 
+  scale_y_continuous(breaks = seq(0, 0.5, 0.1), limits = c(0, 0.5)) +
+  #geom_rangeframe() +
+  # theme_tufte() +
+  theme_classic() +
+  labs(x = "Year",
+       y = "Proportion of Sites Occupied") +
+  theme(axis.title.x = element_text(size = 14, face = "bold"),
+        axis.text.x = element_text(size = 12, angle = 45, hjust = 1),
+        axis.title.y = element_text(size = 14, face = "bold"),
+        axis.text.y = element_text(size = 12))
+
+plot1
+
+```
+
+``` {r occ-other, include=TRUE, echo=TRUE, message=FALSE, warning=FALSE, eval=TRUE, out.width="100%"}
+
+plot2 <- df_output_occ %>%
+  filter(status == "occupied",
+         !region == "Lower Athabasca Region") %>%
+  mutate(year = as.numeric(year),
+         region = factor(region, levels = c("Western McClelland Fen",
+                                            "Eastern McClelland Fen",
+                                            "Mineable Areas",
+                                            "Non-Mineable Areas"))) %>%
+  ggplot(mapping = aes(x = year, y = occupancy)) +
+  geom_point(mapping = aes(color = region), size = 3.5) +
+  geom_line(mapping = aes(color = region)) +
+  scale_y_continuous(breaks = seq(0, 1, 0.2), limits = c(0, 1)) +
+  theme_classic() +
+  labs(x = "Year",
+       y = "Proportion of Sites Occupied",
+       # title = "Occupancy rates in four regions of the Lower Athabasca",
+       caption = "Number of sites: 71 (West) 140 (East) 226 (Mineable) 269 (Non-Mineable)") +
+  guides(color = guide_legend(nrow = 2, byrow = TRUE)) +
+  theme(axis.title.x = element_text(size = 13, face = "bold"),
+        axis.text.x = element_text(size = 11, angle = 45, hjust = 1),
+        axis.title.y = element_text(size = 13, face = "bold"),
+        axis.text.y = element_text(size = 10),
+        legend.position = "bottom",
+        legend.title = element_blank(),
+        legend.text = element_text(size = 10),
+        strip.text.x = element_blank(),
+        panel.spacing.x = unit(1, "lines"),
+        panel.spacing.y = unit(1.75, "lines"),
+        plot.caption = element_text(face = "italic", size = 8, hjust = 0.5)) +
+  facet_wrap(~ region, nrow = 2) 
+
+
+plot2
+
+```
+
+## Detection, Colonization, and Extinction
+
+```{r include=TRUE, echo=TRUE, message=FALSE, warning=FALSE, eval=TRUE, out.width="100%"}
+
+# Extract detection, colonization, and extinction information.
+df_output <- OUT %>%
+  map_df(~ bind_rows(.x[2:4]), .id = "region") %>%
+  mutate(region = case_when(
+    region == "East" ~ "Eastern McClelland Fen",
+    region == "West" ~ "Western McClelland Fen",
+    region == "LAPR" ~ "Lower Athabasca Region",
+    region == "Mine" ~ "Mineable Areas",
+    region == "NoMine" ~ "Non-Mineable Areas"
+  ))
+
+# Plot output
+plot3 <- df_output %>%
+  mutate(Parameter = factor(Parameter, 
+                            levels = c("Detection", 
+                                       "Colonization", 
+                                       "Extinction")),
+         region = factor(region,
+                         levels = c("Lower Athabasca Region",
+                                    "Western McClelland Fen",
+                                    "Eastern McClelland Fen",
+                                    "Mineable Areas",
+                                    "Non-Mineable Areas")),
+         Year = as.numeric(Year)) %>%
+  ggplot(aes(x = Year, y = Predicted, color = Parameter)) +
+  geom_point(size = 2.5) +
+  geom_line() +
+  # geom_errorbar(aes(y = Predicted, ymin = lower, ymax = upper)) + 
+  facet_grid(Parameter ~ region, 
+             labeller = labeller(region = label_wrap_gen(width = 10))) +
+  scale_y_continuous(breaks = seq(0, 0.8, 0.2)) +
+  theme_classic() +
+  theme(axis.text.x = element_text(size = 8, angle = 45, hjust = 1),
+        axis.title.x = element_text(size = 12, face = "bold"),
+        axis.title.y = element_text(size = 12, face = "bold"),
+        strip.text.x = element_text(size = 10, face = "bold"),
+        strip.text.y = element_text(size = 10, face = "bold"),
+        legend.position = "none",
+        panel.border = element_blank())
+
+plot3
 
 ```
 <br>
