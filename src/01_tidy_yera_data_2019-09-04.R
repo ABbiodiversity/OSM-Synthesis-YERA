@@ -109,9 +109,17 @@ df_occupy_new <- ls_yera_new[[1]] %>%
          region = ifelse(!is.na(mclelland), mclelland, region)) %>%
   select(ss:occupied, region)
 
+# Standardized Day of Year - new
+df_doy_new <- ls_yera_new[[2]] %>%
+  # select(ss:stdsdoy20184) %>%
+  na_if(".") %>%
+  gather(key = "year", value = "stdsdoy", stdsdoy20131:stdsdoy20184) %>%
+  mutate(year = str_sub(year, 8, 11))
+
 # Export processed data (new)
 
 write_csv(df_occupy_new, "./data/processed/yera_occupy_2013-18_new.csv")
+write_csv(df_doy_new, "./data/processed/yera_doy_2013-18_new.csv")
 
 
 

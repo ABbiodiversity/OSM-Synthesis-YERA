@@ -5,8 +5,8 @@ library(AICcmodavg)
 Occ=read.table("./data/processed/yera_occupy_2013-18_new.csv", sep=',', header=T, stringsAsFactors=F)
 #manually change data where needed.
 
-Doy=read.table("D:/School stuff/Manuscripts/YERA Trend/yera_doy_2013-18.txt", sep=',', header=TRUE, stringsAsFactors=F)
-
+# Doy=read.table("D:/School stuff/Manuscripts/YERA Trend/yera_doy_2013-18.txt", sep=',', header=TRUE, stringsAsFactors=F)
+Doy <- read.table("./data/processed/yera_doy_2013-18_new.csv", sep = ',', header = TRUE, stringsAsFactors = FALSE)
 
 #Note with the new data we have lost some station-years.
 #For now I'm just going to replace these station-years with NA
