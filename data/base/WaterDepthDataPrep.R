@@ -33,10 +33,22 @@ sort(unique(water$Depth))
 table(water$Distance, water$year)
 table(water$Plot, water$Distance)
 
+#One unusual thing is distances of 1, 2, and 3. Apparently the explanation
+#for that is that the measures were taken 3 times at each point.
+#So when you have C and distance=2, it's actually the second
+#measure at C. With N and distance=1, it's the first measure at 10 m N.
+#Cardinal directions were apparently all at 10m in that case.
+#I'm just going to take the first measurement. Averaging the 3 would
+#be another option, but I don't think thats best because an averaged
+#value has different properties than a single measurement.
+
+water$Distance[water$Distance==1 & water$Plot=='C']=0
+water$Distance[water$Distance==1 & water$Plot %in% c('N', 'E', 'S', 'W')]=10
+water$Distance[water$Distance %in% c(2,3)]=NA
+
 #I'm going to sort that out later. For now I'll just remove weird values.
 
 water$Distance[water$Distance==99]=NA
-water$Distance[water$Distance %in% c(1,2,3)]=NA
 water$Distance[water$Plot %in% c("",'NE', 'NW','SE', 'SSW', 'SW')]=NA
 water$Distance[water$Plot %in% c('E', 'N', 'S', 'W') & water$Distance==0]=NA
 water$Distance[water$Plot == 'C' & water$Distance!=0]=NA
@@ -99,7 +111,8 @@ for(i in 1:length(S)) {
 
 rm(list=ls()[!ls()%in%c('OUT','water','SurveyData')])
 
-write.csv(OUT, './data/processed/WaterMeasurementsByPoint.csv')
+write.csv(water, './data/processed/LongWaterMeasurements.csv', row.names=F)
+write.csv(OUT, './data/processed/WaterMeasurementsByPoint.csv', row.names=F)
 
 
 
