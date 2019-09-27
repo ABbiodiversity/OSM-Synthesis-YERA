@@ -63,13 +63,21 @@ df_meta <- ls_yera[[4]] %>%
   select(data_set:longit, mineable = Mineablebin) %>%
   select(ss, everything()) %>%
   mutate(lapr = 1) %>%
-  left_join(df_mclelland, by = "ss")
+  left_join(df_mclelland, by = "ss") %>%
+  mutate(region = ifelse(mineable == "1", "mineable", "unmineable"),
+         region = ifelse(!is.na(mclelland), mclelland, region)) %>%
+  # Regionally important wetlands
+  mutate(wetland = ifelse(str_detect(ss, "^Y:257|^Y:258"), "Grazing Lease 820577", NA),
+         wetland = ifelse(str_detect(ss, "^Y:216|^Y:217|^Y:218"), "Southern Cold Lake", wetland),
+         wetland = ifelse(str_detect(ss, "^Y:207|^Y:200|^Y:201|^Y:401|^Y:403"), "Marguerite Lake Wetlands", wetland),
+         wetland = ifelse(str_detect(ss, "^Y:248"), "West of Touchwood PRA", wetland),
+         wetland = ifelse(str_detect(ss, "^Y:464|^Y:381|^Y:281|^Y:280"), "Northwest of Janvier", wetland),
+         wetland = ifelse(region == "west", "McClelland Lake Fen - West", wetland),
+         wetland = ifelse(region == "east", "McClelland Lake Fen - East", wetland))
 
 # Join site metadata to df_occupy
 df_occupy_region <- df_occupy %>%
   left_join(df_meta, by = "ss") %>%
-  mutate(region = ifelse(mineable == "1", "mineable", "unmineable"),
-         region = ifelse(!is.na(mclelland), mclelland, region)) %>%
   select(ss:occupied, region) %>%
   # Correction to one site (per R.Hedley)
   mutate(occupied = ifelse(ss == "Y:216@5:CT" & year == "2017", NA, occupied))
@@ -107,7 +115,7 @@ df_occupy_new <- ls_yera_new[[1]] %>%
   left_join(df_meta, by = "ss") %>%
   mutate(region = ifelse(mineable == "1", "mineable", "unmineable"),
          region = ifelse(!is.na(mclelland), mclelland, region)) %>%
-  select(ss:occupied, region)
+  select(ss:occupied, region, wetland)
 
 # Standardized Day of Year - new
 df_doy_new <- ls_yera_new[[2]] %>%
@@ -120,6 +128,12 @@ df_doy_new <- ls_yera_new[[2]] %>%
 
 write_csv(df_occupy_new, "./data/processed/yera_occupy_2013-18_new.csv")
 write_csv(df_doy_new, "./data/processed/yera_doy_2013-18_new.csv")
+
+#-------------------------------------------------------------------------------
+
+
+
+
 
 
 
