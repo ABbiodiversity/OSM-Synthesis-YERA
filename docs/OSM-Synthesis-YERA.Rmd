@@ -59,6 +59,8 @@ select <- dplyr::select
 
 # Preferred habitat raster (LAPR)
 ras_prefhab <- raster(here("./data/base/spatial/yera_prefhab_250m.tif"))
+# Abundance predictions (McClelland Lake)
+ras_pred <- raster(here("./data/base/spatial/final_yera_pred_mcclelland.tif"))
 # Alberta's OSR
 sf_osr <- st_read(here("./data/base/spatial/AB_OSR.shp"), quiet = TRUE)
 # Lease sites
@@ -562,7 +564,7 @@ Each of the four products were either available in, or converted to, a 30-m rast
 
 In order for a habitat map to be considered predictive, higher occupancy rates should be found in areas identified as more suitable. Targeted monitoring was undertaken in 2018 at previously unsurveyed locations to assess whether the habitat map could reliably predict Yellow Rail occupancy. Using occupancy modeling, it was confirmed that locations with higher predicted suitability had higher occupancy rates (Hedley & Bayne, *in prep*). Only three individuals were detected at two locations in habitat classes zero through six, while 20 were detected in classes seven (4) and eight (16) (Hedley & Bayne, *in prep*). By restricting future survey effort to the most suitable habitats, Yellow Rails can be encountered more efficiently in the future with more successful site identification. 
 
-The interactive map below displays the predicted habitat suitability for Yellow Rail in the subset of the OSR. The area of the map is restricted to the area covered by each of the four input mapping products. Note that although the map was developed at a 30-m resolution, it is displayed here at larger resolution to improve rendering speeds.   
+The interactive map below displays the predicted habitat suitability for Yellow Rail in the subset of the OSR. The area of the map is restricted to the area covered by each of the four input mapping products. Note that although the mapping product was developed at a 30-m resolution, it is displayed here at larger resolution to improve rendering speeds.   
 
 <br>
 ```{r habitat-map, include=TRUE, echo=FALSE, message=FALSE, warning=FALSE, eval=TRUE, out.width="100%", fig.height=9}
@@ -662,6 +664,45 @@ grid.draw(shift_legend(plot7))
 
 ```
 
+## Spatially Explicit Abundance Modelling Using Satellite Remote Sensing
+
+Advancements in remote sensing technologies have dramatically increased the breadth and resolution of landcover data available for ecological purposes (Cord et al., 2013). Among these advancements has been the availability of open-access satellite data (e.g. Landsat, Sentinel-1, Sentinel-2), which when combined with cloud computing power (e.g. through Google Earth Engine) and data science software has made the inegration of remotely sensed data into applied ecological research possible. 
+
+McLeod (2019) used the Yellow Rail abundance data collected throughout the OSM (and more broadly, the Lower Athabasca Region) to build a distribution model with landcover information directly derived from satellite data. This information included data obtained from Sentinel-1, Sentinel-2 (Copernicus Programme, 2017) and the Advanced Land Observing Satellite (ALOS) Digital Elevation Model (DEM) (JAXA, 2019), which were then processed using Google Earth Engine. A total of 15 input variables were used in the model to predict Yellow Rail abundance, including Anthocyanin Reflectance Index (ARI), the Normalized Difference of Polarization (DPOL), a topographic wetness index, and a Red Edge Inflection Point (REIP). A boosted regression tree modeling approach was used to fit the distribution model for Yellow Rail. 
+
+There are several inherent advantages to this approach of using remotely sensed data directly. First, it allows for avoidance of building models off prior models (i.e. landcover classifications), which compounds error rates (McLeod, 2019). Additionally, the continual collection of satellite data makes it possible to dynamically update a species distribution model with annual, or seasonal, remotely sensed inputs to better reflect changes within a changing wetland ecosystem (like those preferred by Yellow Rail) (McLeod, 2019).
+
+Displayed below is a subset of the predictive map, which shows the predicted abundance of breeding Yellow Rail at a 10-m resolution in both the eastern and western portions of the McClelland Fen.  
+
+```{r pred-map, include=TRUE, echo=FALSE, message=FALSE, warning=FALSE, eval=TRUE, out.width="100%", fig.height=7}
+
+pred.bins <- c(0, 0.5, 1, 1.5, 2, 3, 4, 15.25104)
+pal2 <- colorBin(palette = "viridis", values(ras_pred), bins = pred.bins, 
+                 na.color = "transparent", pretty = TRUE)
+
+map_pred <- 
+  leaflet() %>%
+  # addTiles() %>%
+  addProviderTiles(providers$Esri.WorldImagery, group = "Satellite Imagery") %>%
+  
+  # Add raster layer
+  addRasterImage(ras_pred, colors = pal2, opacity = 1,
+                 group = "Predicted Rail Abundance") %>%
+  
+  addLegend(colors = pal2(c(0, 0.5, 1, 1.5, 2, 3, 4)), 
+            labels = c("0-0.5", "0.5-1", "1-1.5", "1.5-2", "2-3", "3-4", "4+"), 
+            opacity = 1,  
+            title = "Predicted Rail Abundance", position = "bottomright",
+            group = "Predicted Rail Abundance") %>%
+
+  addLayersControl(overlayGroups = "Predicted Rail Abundance",
+                   options = layersControlOptions(collapsed = FALSE))  
+
+map_pred
+  
+```
+
+
 ## Regional Population Estimates
 
 Hedley and Bayne (*in prep*) used the results of the habitat suitability map, combined with occupancy modeling, to produce a regional population estimate for Yellow Rail[^1]. Occupancy rates in each habitat class (0-8) were extrapolated to the rest of the region using a hexagon grid methodology, where a hexagon grid is simulated across the study area and points are generated at the centroid. Two grid sizes, in terms of distance between centroids, were chosen based on assumptions about the detection radius of the ARUS, territory size, and territory shape (details available in Hedley and Bayne, *in prep*): 802-m and 605-m. Once these grids were simulated across the landscape, occupancy rate was predicted at each cell according to the habitat class at the centroid. 
@@ -688,7 +729,9 @@ kable(df_population, align = c("l", "r", "r", "r", "r", "r"),
 
 ```
 
-Relative to their share of the total area (13.9%), leased areas (both mining and *in situ*) account for 17% of the estimated regional population of Yellow Rails.  
+Relative to their share of the total area (13.9%), leased areas (both mining and *in situ*) account for 17% of the estimated regional population of Yellow Rails.
+
+
 
 # Discussion
 
