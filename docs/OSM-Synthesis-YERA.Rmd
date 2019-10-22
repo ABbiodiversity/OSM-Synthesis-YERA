@@ -94,7 +94,7 @@ load(here("./beta/results/MultiYearOccupancyOutput_new.RData"))
 Yellow Rails (*Coturnicops noveboracensis*) are one of the most secretive and poorly understood bird species in North America. They are migratory, spending the months of May until September at their breeding grounds throughout Canada, and the rest of the year in wetlands along the southeast coast of the United States. The remoteness of their wetland breeding habitats and their nocturnal activity patterns render them poorly sampled by standard bird monitoring efforts. A lack of information regarding distribution, population size, population trends, and basic biology has been a primary reason for conservation concern. In addition, there are concerns surrounding loss of their preferred wetland habitats, based on documented cases of human activities reducing or eliminating the suitability of previously occupied wetlands. The purpose of this report is to summarize findings from monitoring efforts in the Oil Sands Region (OSR) of Alberta, synthesize available knowledge into tools for future management, and highlight priorities for further research.
 
 <br>
-```{r rail, include=TRUE, echo=FALSE, message=FALSE, warning=FALSE, eval=TRUE, out.width='40%', fig.cap='Photo credit: Audobon.'}
+```{r rail, include=TRUE, echo=FALSE, message=FALSE, warning=FALSE, eval=TRUE, out.width='40%', fig.cap="Yellow Rail. Photo credit: Audobon."}
 
 include_graphics(here("./docs/pics/yellow-rail.jpg"))
 
