@@ -3,22 +3,25 @@ title: "Yellow Rail in Alberta's Oil Sands Region"
 author: "Richard Hedley, Marcus Becker, Erin Bayne"
 date: "September 6, 2019"
 output:
-  html_document:
+  bookdown::html_document2:
     highlight: zenburn
+    number_sections: yes
     self_contained: yes
     theme: paper
     toc: yes
     toc_depth: 4
     toc_float: yes
-    number_sections: true
-    code_folding: hide
+  html_document:
+    df_print: paged
+    toc: yes
+    toc_depth: '4'
   pdf_document:
     toc: yes
   word_document:
     toc: yes
     toc_depth: '4'
-urlcolor: blue
 always_allow_html: yes
+urlcolor: blue
 ---
 
 <style>
@@ -88,7 +91,7 @@ load(here("./beta/results/MultiYearOccupancyOutput_new.RData"))
 
 # Introduction
 
-Yellow Rails (*Coturnicops noveboracensis*) are one of the most secretive and poorly understood bird species in North America. They are migratory, spending the months of May until September at their breeding grounds throughout Canada, and the rest of the year in wetlands along the southeast coast of the United States. The remoteness of their wetland breeding habitats and their nocturnal activity patterns render them poorly sampled by standard bird monitoring efforts. A lack of information regarding distribution, population size, population trends, and basic biology has been a primary reason for conservation concern. The purpose of this report is to summarize findings from monitoring efforts in the Oil Sands Region (OSR) of Alberta, synthesize available knowledge into tools for future management, and highlight priorities for further research.
+Yellow Rails (*Coturnicops noveboracensis*) are one of the most secretive and poorly understood bird species in North America. They are migratory, spending the months of May until September at their breeding grounds throughout Canada, and the rest of the year in wetlands along the southeast coast of the United States. The remoteness of their wetland breeding habitats and their nocturnal activity patterns render them poorly sampled by standard bird monitoring efforts. A lack of information regarding distribution, population size, population trends, and basic biology has been a primary reason for conservation concern. In addition, there are concerns surrounding loss of their preferred wetland habitats, based on documented cases of human activities reducing or eliminating the suitability of previously occupied wetlands. The purpose of this report is to summarize findings from monitoring efforts in the Oil Sands Region (OSR) of Alberta, synthesize available knowledge into tools for future management, and highlight priorities for further research.
 
 <br>
 ```{r rail, include=TRUE, echo=FALSE, message=FALSE, warning=FALSE, eval=TRUE, out.width='40%', fig.cap='Photo credit: Audobon.'}
@@ -112,11 +115,9 @@ Yellow Rail abundance and occupancy can fluctuate from year to year at a wetland
 
 # Monitoring and Research Objectives
 
-<br>
-
 + **Identify key breeding sites**
 
-Currently, Yellow Rails have been found at approximately 200 survey points in the OSR. A habitat map constructed from these data can be used to predict additional breeding sites and estimate population sizes and potential threats. Predicted sites should be surveyed when possible to verify presence/absence. Regions that are potentially important but which have not been thoroughly surveyed include the wetlands surrounding Lake Clair in Wood Buffalo National Park, the entire "western panhandle" of the OSR, and most wetlands not within 10-km of a road.
+Currently, Yellow Rails have been found at approximately 200 survey points in the OSR. A habitat map constructed from these data can be used to predict additional breeding sites and estimate population sizes and potential threats. Predicted sites should be surveyed when possible to verify presence/absence. Regions that are potentially important but which have not been thoroughly surveyed include the wetlands surrounding Lake Clair in Wood Buffalo National Park, the entire western region of the OSR corresponding to the Peace River Oil Sands, and most wetlands not within 10-km of a road.
 
 Identification of new sites can be accomplished by visiting sites of high predicted habitat suitability to confirm presence/absence of Yellow Rails. In particular, visiting areas with large expanses of predicted suitable habitat is important, as these locations are likely to harbour significant populations of Yellow Rails.
 
@@ -138,19 +139,19 @@ Several oil sands mines (or proposed mines) abut or overlap significant patches 
 
 + **Develop tools for Yellow Rail management**
 
-Finally, research findings can be distilled into tools for land managers to improve Yellow Rail conservation in the future. In this report we present a predictive habitat suitability map (30-m raster resolution) that can be used to assess threats to Yellow Rail in the region and identify new potential breeding sites.
+Finally, research findings can be distilled into tools for land managers to improve Yellow Rail conservation in the future. In this report we present a predictive habitat suitability map (30-m raster resolution) that can be used to assess threats to Yellow Rail in the region and identify new potential breeding sites. In addition, we present findings of predicted rail abundance using data from remote satellite imagery (MacLeod, 2019). This method represents a promising avenue of future ecological research, as increased availability of remotely sensed landcover data at large scales, coupled with improved data science techniques, can enable the development of dynamic species distribution models.  
 
 # Data Collection
 
 The status of Yellow Rails in the oilsands region has been poorly understood historically because they are not well surveyed by standard monitoring efforts. In 2012, the now-defunct Ecological Monitoring Committee for the Lower Athabasca began targeted surveys for Yellow Rails throughout the oilsands region. In the first year, human point counts and autonomous recording units (ARUs) were both employed in surveys, but it was quickly determined that ARUs are as good or better than humans at detecting Yellow Rails, and have the added benefit that they do not require humans to venture to remote areas at night. ARUs have been the sole survey method since 2013. 
 
-Yellow Rails are surveyed through listening to recordings made at 2:00am during peak breeding season, which runs from roughly May 20 to July 15 each year. At 2:00am, we have found that Yellow Rails are highly vocal and easily detected, such that a 1-minute survey has a ~50% probability of detecting a Yellow Rail, given that one is present. Therefore, at each station surveyed in a given year, four 2:00am recordings are listened to to detect the presence of rail. The four recordings are randomly sampled from the available days between June 1 and July 15. Conducting multiple surveys per station allows estimation of both occupancy rate and detection probability via occupancy analysis (discussed in the results section below).
+Yellow Rails are surveyed through listening to recordings made at 2:00am during peak breeding season, which runs from roughly May 20 to July 15 each year. At 2:00am, we have found that Yellow Rails are highly vocal and easily detected, such that a 3-minute survey has a ~60% probability of detecting a Yellow Rail, given that one is present. Therefore, at each station surveyed in a given year, four 2:00am recordings are listened to to detect the presence of rail. The four recordings are randomly sampled from the available days between June 1 and July 15. Conducting multiple surveys per station allows estimation of both occupancy rate and detection probability via occupancy analysis (discussed in the results section below).
 
 Just 2 Yellow Rails were detected at 302 survey stations in 2012 (0.007 individuals per sation); these findings initiated an iterative process whereby detections were used to refine our understanding of habitat preferences, which was then used to identify additional sites to survey. As evidence of the effectiveness of this process, at 102 stations that were visited for the first time in 2018 and had high predicted suitability, we found 22 Yellow Rail individuals (0.22 individuals per station, more than 30 times the rate of detections in 2012).
 
 Once a wetland has been selected for surveys, multiple ARUs are usually placed within the wetland. The most common deployment scheme is to place five ARUs in a square with 600m edges: one unit is placed at each corner, and one in the middle. Variations on this theme have been used, with the general intent of placing ARUs sufficiently far (>500m) from their nearest neighbours to increase spatial independence. Each ARU placement is considered a 'site' in the analysis below, and displayed on the map.
 
-In addition to visiting new sites, we have resurveyed previous survey locations, which will allow an assessment of inter-annual variation in site occupancy and analysis of trends over time. As of 2017, 143 survey stations with at least one Yellow Rail detection had been surveyed in multiple years.
+In addition to visiting new sites, we have resurveyed previous survey locations, which will allow an assessment of inter-annual variation in site occupancy and analysis of trends over time. As of 2018, 143 survey stations with at least one Yellow Rail detection had been surveyed in multiple years.
 
 # Results
 
@@ -158,11 +159,11 @@ In addition to visiting new sites, we have resurveyed previous survey locations,
 
 We set out to identify and monitor key Yellow Rail breeding sites in the OSR, as per our first objective.
 
-In the map below, the reader can filter the data in several ways, including by survey year (2013-2018), regionally important wetland habitat, or whether a Yellow Rail was detected at a particular site. The seven regionally important wetlands (or wetland complexes) listed here are the source of 249 (87%) of the 286 individuals (males) detected from 2012 to 2018 via acoustic surveys in the study region. No other wetland site has so far been found to contain more than 10 individuals. For smaller wetlands, the number of detected males may represent a reasonable population estimate of males at the wetland; however, for larger wetlands where only a portion of the wetland has been sampled, this is likely an underestimate.   
+In the map below, the reader can filter the data in several ways, including by survey year (2013-2018), regionally important wetland habitat, or whether a Yellow Rail was detected at a particular site. Seven regionally important wetlands (or wetland complexes) are listed in Table 1, and are the source of 249 of 286 (87%) of the individual males detected from 2013 to 2018 via acoustic surveys. The Eastern and Western McClelland Fen Mine sites, represented by the cluster of sites north of Fort McMurray, have together produced 118 (41%) detections over the period surveyed. No other wetland site has so far been found to contain more than 10 individuals. For smaller wetlands, the number of detected males may represent a reasonable population estimate of males at the wetland; however, for larger wetlands where only a portion of the wetland has been sampled, this is likely an underestimate.   
 
 <br>
 <br>
-```{r site-map, include=TRUE, echo=TRUE, message=FALSE, warning=FALSE, eval=TRUE, out.width="100%", fig.height=9}
+```{r site-map, include=TRUE, echo=FALSE, message=FALSE, warning=FALSE, eval=TRUE, out.width="100%", fig.height=9}
 
 df_occ_summary <- df_occupy %>%
   mutate(occupied = ifelse(occupied == 1, TRUE, FALSE)) %>%
@@ -190,7 +191,7 @@ shared_ss <- SharedData$new(df_occ_summary)
 bscols(widths = c(3, 3, NA),
          filter_checkbox("yera_occupied", "Yellow Rail Detection", shared_ss, ~yera_occupied),
          # Will try to figure out a way to have a default selection.
-         filter_select("year", "Survey Year", shared_ss, ~year, multiple = FALSE),
+         filter_select("year", "Survey Year", shared_ss, ~year, multiple = FALSE, selected = "2013"),
          filter_checkbox("wetland", "Regionally Important Wetlands", shared_ss,
                   ~wetland)
 )
@@ -250,7 +251,7 @@ sf_osr %>%
 ```
 <br>
 
-```{r wetlands-table, include=TRUE, echo=TRUE, message=FALSE, warning=FALSE, eval=TRUE}
+```{r wetlands-table, include=TRUE, echo=FALSE, message=FALSE, warning=FALSE, eval=TRUE}
 
 df_wetlands <- data.frame(
   "Wetland" = c("Eastern McClelland Fen Mine", "Western McClelland Fen Mine",
@@ -271,19 +272,19 @@ kable(df_wetlands, align = c("l", "r", "r", "r"),
 
 ### Methods
 
-For this analysis we estimated a dynamic site-occupancy model (MacKenzie et al., 2003), which allows for inference about the occurrence of Yellow Rail at collections of sites, and about how changes in occurrence are driven by colonization and local extinction. These models are dynamic in the sense that they are applied to multiple "periods" (years, in our case) and allow for between-period occurrence dynamics (i.e. a rail may be present one year, but not the next). In a monitoring context such as ours, site occupancy probabilities can be used as a metric reflecting the current state of the population of interest (MacKenzie et al., 2003).   
+For this analysis we estimated a dynamic site-occupancy model (MacKenzie et al., 2003), which allows for inference about the occurrence of Yellow Rail at collections of sites, and about how changes in occurrence are driven by local colonization and extinction. These models are dynamic in the sense that they are applied to multiple "periods" (years, in our case) and allow for between-period occurrence dynamics (i.e. a rail may be present one year, but not the next). In a monitoring context such as ours, site occupancy probabilities can be used as a metric to reflect the current state of the population of interest (MacKenzie et al., 2003).   
 
 Dynamic occupancy models are also able to account for imperfect detection probability (i.e., a rail can go unobserved at a site during a particular survey, even if it is there). An occupancy model may be seriously biased if detection error is unaccounted for (Moilanen, 2002; Royle and Dorazio, 2008). This bias is manifested as underestimates of site occupancy and inflated estimates of species turnover rate, where apparent recolonization of a site is actually just due to non-detection of a species actually present.  
 
-We use the package `unmarked` (Kery and Chandler, 2016) to fit a dynamic occupancy model to our Yellow Rail data using the function `colext()` in R v3.6.1 (R Core Team, 2019). To better understand variation within the region, we subset our data into four geographic areas and occupancy analysis is conducted on each: the Eastern McClelland Fen Mine (n = 140), Western McCelland Fen Mine (71), all Mineable Areas (226), and Non-Mineable Areas (269). The analysis is conducted using all sites together as well (Full Region).  
+We use the package `unmarked` (Kery and Chandler, 2016) to fit a dynamic occupancy model to our Yellow Rail data using the function `colext()` in R v3.6.1 (R Core Team, 2019). To better understand variation within the region, we subset our data into four geographic areas and occupancy analysis is conducted on each: the Eastern McClelland Fen Mine (n = 140), Western McCelland Fen Mine (71), all Mineable Areas (226), and Non-Mineable Areas (269). The analysis is conducted using all sites together as well (Full Region). 
 
 ### Detection, Colonization, and Extinction
 
 Detection is the proportion of visits to a site where a species is detected. Rather than using this straight proportion, this model accounts for imperfect detection probability using the method described in MacKenzie et al (2003). 
 
-Detection probability by subset is displayed in the figure below, followed by the full region. The error bars represent 90% confidence intervals in the estimated detection parameter.  
+Detection probability by regional subset is displayed in Figure \@ref(fig:detection-comb) below, followed by the full region (Figure \@ref(fig:detection-full)). The error bars represent 90% confidence intervals in the estimated detection parameter.  
 
-```{r detection-comb, include=TRUE, echo=TRUE, message=FALSE, warning=FALSE, eval=TRUE, out.width="100%"}
+```{r detection-comb, include=TRUE, echo=FALSE, message=FALSE, warning=FALSE, eval=TRUE, out.width="100%", fig.cap="Estimated Yellow Rail detection probability in four regional subsets."}
 
 # Extract detection, colonization, and extinction information.
 df_output <- OUT %>%
@@ -336,9 +337,11 @@ plot1 <- df_output %>%
   
 plot1
 
+#ggsave(here("./docs/pics/detection-comb.png"))
+
 ```
 <br>
-``` {r detection-full, include=TRUE, echo=TRUE, message=FALSE, warning=FALSE, eval=TRUE, out.width="70%"}
+``` {r detection-full, include=TRUE, echo=FALSE, message=FALSE, warning=FALSE, eval=TRUE, out.width="70%", fig.cap="Estimated Yellow Rail detection probability through the full study region."}
 
 plot2 <- df_output %>%
   filter(Parameter == "Detection" & region == "Full Region") %>%
@@ -364,15 +367,19 @@ plot2 <- df_output %>%
   
 plot2
 
+# ggsave(here("./docs/pics/detection-full.png"))
+
 ```
 <br>
 
+Detection probability can be influenced by a variety of factors. First, individuals may call less in a given year for unknown reasons.  This could lead to lower detection rates but stable occupancy. Alternatively, detection rates increase when there are more individuals present at a location (Bayne et al. 2017). Thus, the decline we see in detection rates may reflect the species still occupying the same number of sites but fewer individuals being present at some sites leading to lower detection rates (i.e. the same number of sites are occupied but fewer individuals are present at each site). We are currently working on analyses that use the count of yellow rails at each site.
+
 Changes in occurrence of a species can be driven by rates of both colonization and extinction at a set of local sites. Colonization is probability that an unoccupied site becomes occupied in the next period; conversely, extinction (or alternatively, survival) describes the probability that an occupied site continues to be occupied in the next period.
 
-Predicted colonization and extinction parameters are displayed below for each regional subset, followed by the two parameters for a full regional model. Error bars represent a 90% confidence interval in the estimated colonization and extinction parameters.
+Predicted colonization and extinction parameters are displayed below for each regional subset (Figure \@ref(fig:ec-comb)), followed by the two parameters for a full regional model (Figure \@ref(fig:ec-full)). Error bars represent a 90% confidence interval in the estimated colonization and extinction parameters.
 
 <br>
-```{r extinction-colonization-comb, include=TRUE, echo=TRUE, message=FALSE, warning=FALSE, eval=TRUE, out.width='100%'}
+```{r ec-comb, include=TRUE, echo=FALSE, message=FALSE, warning=FALSE, eval=TRUE, out.width='100%', fig.cap="Local Yellow Rail colonization and extinction probabilities in four regional subsets."}
 
 plot3 <- df_output %>%
   filter((Parameter == "Colonization" | Parameter == "Extinction") & !region == "Full Region") %>%
@@ -404,14 +411,16 @@ plot3 <- df_output %>%
 
 plot3
 
+# ggsave(here("./docs/pics/extinction-colonization-comb.png"))
+
 ```
 <br>
-``` {r extinction-colonization-full, include=TRUE, echo=TRUE, message=FALSE, warning=FALSE, eval=TRUE, out.width="65%"}
+``` {r ec-full, include=TRUE, echo=FALSE, message=FALSE, warning=FALSE, eval=TRUE, out.width="65%", fig.cap="Local Yellow Rail colonization and extinction probability for the full study region."}
 
 plot4 <- df_output %>%
   filter((Parameter == "Colonization" | Parameter == "Extinction") & region == "Full Region") %>%
   ggplot(aes(x = Year, y = Predicted)) +
-  geom_point(aes(color = region), size = 6) +
+  geom_point(aes(color = region), size = 4) +
   geom_errorbar(aes(y = Predicted, ymin = lower, ymax = upper, color = region), 
                 width = 0.15) +
   geom_line(aes(color = region)) +
@@ -438,15 +447,19 @@ plot4 <- df_output %>%
 
 plot4
 
+#ggsave(here("./docs/pics/extinction-colonization-full.png"))
+
 ```
 <br>
 
+The high rates of extinction and colonization show that the local dynamics of the Yellow Rail are highly variable over time. Thus, any short-term disappearance from a site (i.e. the Western McLelland fen) is not neccesarilly cause for concern as there is reasonable probability that they will recolonize the area when water levels are appropriate (see occupancy discussion below).
+
 ### Occupancy
 
-Occupancy, adjusted for imperfect detection, is estimated for each of the four regional subsets between 2013 and 2018.
+Occupancy, adjusted for imperfect detection, is estimated for each of the four regional subsets between 2013 and 2018, and the results are displayed in Figure \@ref(fig:occ-comb). Occupancy is also estimated for the full region and displayed in Figure \@ref(fig:occ-full). 
 
 <br>
-``` {r occ-other, include=TRUE, echo=TRUE, message=FALSE, warning=FALSE, eval=TRUE, out.width="100%"}
+``` {r occ-comb, include=TRUE, echo=FALSE, message=FALSE, warning=FALSE, eval=TRUE, out.width="100%", fig.cap="Estimated Yellow Rail occupancy in four regional subsets."}
 
 df_output_occ <- OUT %>%
   map(~ data.frame(.x[1])) %>%
@@ -500,23 +513,22 @@ plot5 <- df_output_occ %>%
 
 plot5
 
+# ggsave(here("./docs/pics/occ-comb.png"))
+
 ```
 <br>
 
-Occupancy is also estimated for the full region, including all sites. 
-
-<br>
-```{r occ-full, include=TRUE, echo=TRUE, message=FALSE, warning=FALSE, eval=TRUE, out.width="65%"}
+```{r occ-full, include=TRUE, echo=FALSE, message=FALSE, warning=FALSE, eval=TRUE, out.width="65%", fig.cap="Estimated Yellow Rail occupancy for the full study region."}
 
 plot6 <- df_output_occ %>%
   filter(status == "occupied",
          region == "Full Region") %>%
   mutate(year = as.numeric(year)) %>%
   ggplot(mapping = aes(x = year, y = occupancy)) +
-  geom_point(size = 6, aes(color = region)) +
+  geom_point(size = 4, aes(color = region)) +
   geom_line(aes(color = region)) +
   scale_color_manual(values = "cornflowerblue") +
-  scale_y_continuous(breaks = seq(0, 0.5, 0.1), limits = c(0, 0.5)) +
+  scale_y_continuous(breaks = seq(0, 0.4, 0.1), limits = c(0, 0.4)) +
   theme_bw() +
   labs(x = "Year",
        y = "Proportion of Sites Occupied",
@@ -532,18 +544,20 @@ plot6 <- df_output_occ %>%
 
 plot6
 
+# ggsave(here("./docs/pics/occ-full.png"))
+
 ```
 <br>
 
-One aspect of the data worth noting is the drop in occupancy rates in 2018 in the Western McLelland fen. Occupancy rates were ~0.4 in 2017, and dropped to 0 in 2018. This may be a cause for concern from a conservation perspective, as this section of wetland is adjacent to ongoing developments (Suncor Fort Hills mine). However, a causal link cannot yet be drawn for a few reasons. First, consistent with the existing literature on this species, yellow rail occupancy fluctuates a lot in individual wetlands. Linking changes in occupancy to causal mechanisms is complicated by the inherent noisiness of the data. Second, the potential decline occurred only in the most recent year. Additional years of data would be helpful to assess whether this represents a change in habitat suitability or simply natural fluctuations. In fact, data from 2013 also showed low occupancy rates in the western fen, suggesting 2018 may not have been anomalous. Data from 2019 have been collected and will help answer these questions, but monitoring in 2020 and beyond will likely be needed to draw strong conclusions.
+One aspect of the data worth noting is the drop in occupancy rates in 2018 in the Western McLelland fen. Occupancy rates were approximately 0.45 in 2017, and dropped to 0 in 2018. This may be a cause for concern from a conservation perspective, as this section of wetland is adjacent to ongoing developments (Suncor Fort Hills mine). However, a causal link cannot yet be drawn for a few reasons. First, consistent with the existing literature on this species, Yellow Rail occupancy fluctuates greatly year-to-year in individual wetlands. Linking changes in occupancy to causal mechanisms is complicated by the inherent noisiness of the data. Second, the potential decline occurred only in the most recent year; until 2018, the number of occupied Yellow Rail sites had been consistently increasing in the Mineable region. Additional years of data would be helpful to assess whether this represents a change in habitat suitability or simply natural fluctuations. In fact, data from 2013 also showed low occupancy rates in the western fen, suggesting 2018 may not have been anomalous. Data from 2019 have been collected and will help answer these questions, but monitoring in 2020 and beyond will likely be needed to draw strong conclusions.
 
 ### Further Analysis
 
-To better understand the between-year dynamics of Yellow Rail occupancy, certain environmental conditions or attributes of each site could be added as covariates to the occupancy model. Evidence suggests that Yellow Rail are sensitive to changes in water levels, and even modest changes in hydrology may render habitat unsuitable as a breeding site (Austin and Buhl, 2013; COSEWIC, 2009). Where oil sands development (or potential development) encrouches upon Rail habitat (such as around McClelland Lake), changes to hydrology may pose as big a threat as direct habitat removal. Adding measurements of water depth levels taken during field sampling to the occupancy model may help explain variation in occupancy rates both between years and between sites.
+To better understand the between-year dynamics of Yellow Rail occupancy, certain environmental conditions or attributes of each site could be added as covariates to the occupancy model. Evidence suggests that Yellow Rail are sensitive to changes in water levels, and even modest changes in hydrology may render habitat unsuitable as a breeding site (Austin and Buhl, 2013; COSEWIC, 2009). Where oil sands development (or potential development) encrouches upon Rail habitat (such as around McClelland Lake), changes to hydrology may pose as big a threat as direct habitat removal. Adding measurements of water depth levels taken during field sampling to the occupancy model may help explain variation in occupancy rates both between years and between sites. Since 2013, water depth levels have been recored at 0, 10, 20, 30, 40 and 50-m intervals in four directions (SE, SW, NE, and NW) from each monitoring site.
 
-Preliminary work has been done to include water measurements in a model of Yellow Rail occupancy, which will be presented in an updated version of this report. Below is displayed boxplots of the distribution in water depth measurements taken throughout the monitoring period (2013-2018), subsetted by three regions of interest: the Eastern McClelland Fen Mine, Western McClelland Fen Mine, and unmineable sites[^1].
+Preliminary work has been done to include water measurements in a model of Yellow Rail occupancy, which will be presented in an updated version of this report. Below is displayed boxplots of the distribution in predicted water depth for each year and for three regions of interest: the Eastern McClelland Fen Mine, Western McClelland Fen Mine (\@ref(fig:water-depth-mcclelland)), and unmineable sites (\@ref(fig:water-depth-unmineable))[^1]. A mixed effect model was used, with the log transform of water depth at the response, year and date as independent variables, and monitoring site as a random effect. A Poisson link function was used.   
 
-[^1]: Note that a substantial amount of data cleaning is required, with small number of measurements collected for some regions in some years, and 2017 data that has yet to be digitally transcribed from paper recordings in the field. 
+[^1]: A substantial amount of data cleaning is required, with small number of measurements collected for some regions in some years. 
 
 ```{r water-depth-mcclelland, include=TRUE, echo=FALSE, message=FALSE, warning=FALSE, eval=TRUE, out.width="50%", fig.show="hold", fig.cap="Water depth in the Western (left) and Eastern (right) McClelland Fen Mine, by year."}
 
@@ -551,18 +565,44 @@ include_graphics(c(here("./results/WESTWaterDepthByYear.jpeg"), here("./results/
 
 ```
 
-``` {r water-depth-unmineable, include=TRUE, echo=FALSE, message=FALSE, warning=FALSE, eval=TRUE, out.width="50%", fig.cap="Water depth in the unmineable region."}
+``` {r water-depth-unmineable, include=TRUE, echo=FALSE, message=FALSE, warning=FALSE, eval=TRUE, out.width="50%", fig.cap="Water depth in the Unmineable region."}
 
 include_graphics(here("./results/unmineableWaterDepthByYear.jpeg"))
 
 ```
 
-Distance to mine edge has also been hypothesized as an important predictor of Yellow Rail occupancy at surveyed sites. The map below outlines how mine footprint (ABMI, 2017) has changed near McClelland Lake (both west and east portions of the fen) throughout the study period, along with variation in site occupancy. Mine encrouchment does not appear to alter spatial patterns of rail occupancy, as detections are found both close to and far from mine edges. However, further work will be required to test this effect. 
+Distance to mine edge has also been hypothesized as an important predictor of Yellow Rail occupancy at surveyed sites. The map below outlines how mine footprint (ABMI, 2017) has changed near McClelland Lake (both west and east portions of the fen) throughout the study period, along with variation in site occupancy. Mine encroachment does not appear to alter spatial patterns of rail occupancy, as detections are found both close to and far from mine edges. However, further work will be required to test this effect. Figure \@ref(fig:mine-encroach) below shows how oil sands mine footprint has changed over the study period around McClelland Lake fen.  
 
 <br>
-```{r mine-encrouch, include=TRUE, echo=FALSE, message=FALSE, warning=FALSE, eval=TRUE, out.width="100%", fig.cap="Patterns of Yellow Rail presence in relation to mine footprint from 2013 (top left) to 2018 (bottom right)."}
 
-include_graphics(here("./results/figures/mine_encrouchment.png"))
+```{r mine-encroach-gif, include=FALSE, echo=FALSE, message=FALSE, warning=FALSE, eval=FALSE}
+
+sf_mine <- st_read("./data/base/spatial/mine-encroachment.shp") %>%
+  mutate(YEAR = ifelse(YEAR == 0, 2018, YEAR)) 
+
+sf_sites <- test %>%
+  rename(YEAR = year) %>%
+  filter(wetland == "McClelland Lake Fen - West" | wetland == "McClelland Lake Fen - East") %>%
+  rename(`Rail Detection` = yera_occupied) %>%
+  mutate(`Rail Detection` = fct_relevel(`Rail Detection`, c("NOT SURVEYED", "FALSE", "TRUE")))
+
+encroach <- ggplot(data = sf_sites) +
+  geom_sf(aes(color = `Rail Detection`, fill = `Rail Detection`), size = 2) +
+  geom_sf(data = sf_mine, fill = "grey80", color = "black") +
+  scale_color_manual(values = c("grey40", "#7f2704", "#dbdb1a")) +
+  scale_fill_manual(values = c("grey40", "#7f2704", "#dbdb1a")) +
+  theme_void() +
+  labs(title = 'Year: {current_frame}') +
+  theme(legend.title = element_text(size = 18),
+        legend.position = "bottom",
+        plot.title = element_text(size = 22, face = "bold")) +
+  transition_manual(YEAR)
+
+```
+
+```{r mine-encroach, include=TRUE, echo=FALSE, message=FALSE, warning=FALSE, eval=TRUE, out.width="60%", fig.cap="Patterns of Yellow Rail presence in relation to mine footprint between 2013 and 2018."}
+
+include_graphics(here("./docs/pics/encroach.gif"))
 
 ```
 <br>
@@ -657,10 +697,10 @@ map_prefhab
 ```
 <br>
 
-The distribution of habitat classes in each of six mining lease sites is displayed in the figure below. Jackpine Mine Phase 2 contains the most high quality (classes 7 & 8) habitat within its boundaries, primarily in the northern portion of the lease where it overlaps with the Eastern McClelland Fen. 
+The distribution of habitat classes in each of seven mining lease sites is displayed in Figure \@ref(fig:habitat-plots) below. Jackpine Mine Phase 2 contains the most high quality (classes 7 & 8) habitat within its boundaries, primarily in the northern portion of the lease where it overlaps with the Eastern McClelland Fen.
 
 <br>
-```{r habitat-plots, include=TRUE, echo=FALSE, message=FALSE, warning=FALSE, eval=TRUE, out.width="100%"}
+```{r habitat-plots, include=TRUE, echo=FALSE, message=FALSE, warning=FALSE, eval=TRUE, out.width="100%", fig.cap="Distribution of habitat classes in seven mining lease sites near McClelland Lake Fen."}
 
 df_lease <- st_set_geometry(sf_lease, NULL)
 
@@ -696,11 +736,11 @@ grid.draw(shift_legend(plot7))
 
 Advancements in remote sensing technologies have dramatically increased the breadth and resolution of landcover data available for ecological modeling purposes (Cord et al., 2013). Among these advancements has been the availability of open-access satellite data (e.g. Landsat, Sentinel-1, Sentinel-2), which when combined with cloud computing power (e.g. through Google Earth Engine) and data science software has made the inegration of remotely sensed data into applied ecological research possible. 
 
-McLeod (2019) used the Yellow Rail abundance data collected throughout the OSM (and more broadly, the Lower Athabasca Region) to build a distribution model with landcover information directly derived from satellite data. This information included data obtained from Sentinel-1, Sentinel-2 (Copernicus Programme, 2017) and the Advanced Land Observing Satellite (ALOS) Digital Elevation Model (DEM) (JAXA, 2019), which were then processed using Google Earth Engine. A total of 15 input variables were used in the model to predict Yellow Rail abundance, including Anthocyanin Reflectance Index (ARI), the Normalized Difference of Polarization (DPOL), a topographic wetness index, and a Red Edge Inflection Point (REIP). A boosted regression tree modeling approach was used to fit the distribution model for Yellow Rail. 
+McLeod (2019) used the Yellow Rail abundance data collected throughout the OSM (and more broadly, the Lower Athabasca Region) to build a distribution model with landcover information directly derived from satellite data. This information included data obtained from Sentinel-1, Sentinel-2 (Copernicus Programme, 2017) and the Advanced Land Observing Satellite (ALOS) Digital Elevation Model (DEM) (JAXA, 2019), which were then processed using Google Earth Engine. A total of 15 input variables were used in the model to predict Yellow Rail abundance, including Anthocyanin Reflectance Index (ARI), the Normalized Difference of Polarization (DPOL), a topographic wetness index, and a Red Edge Inflection Point (REIP). A boosted regression tree modeling approach was used to fit the distribution model for Yellow Rail.
 
 There are several inherent advantages to this approach of using remotely sensed data directly. First, it allows for avoidance of building models off prior models (e.g. landcover classifications), which compounds error rates (McLeod, 2019). Additionally, the continual collection of satellite data makes it possible to dynamically update a species distribution model with annual, or seasonal, remotely sensed inputs to better reflect changes within a dynamic wetland ecosystem (like those preferred by Yellow Rail) (McLeod, 2019).
 
-Displayed below is a subset of the predictive map, which shows the predicted abundance of breeding Yellow Rail at a 10-m resolution in both the eastern and western portions of the McClelland Fen Mine area. Note that upland areas were excluded from the model's predicted area. As McLeod (2019) explains, the predicted abundances should be interpreted as an ordered rank where higher predictions equate to an increased likelihood that more individual Yellow Rail are present during the breeding season.    
+Displayed below is a subset of the predictive map, which shows the predicted abundance of breeding Yellow Rail at a 10-m resolution in both the eastern and western portions of the McClelland Fen Mine area. Note that upland areas were excluded from the model's predicted area. As McLeod (2019) explains, the predicted abundances should be interpreted as an ordered rank where higher predictions equate to an increased likelihood that more individual Yellow Rail are present during the breeding season.  
 <br>
 ```{r pred-map, include=TRUE, echo=FALSE, message=FALSE, warning=FALSE, eval=TRUE, out.width="100%", fig.height=7}
 
@@ -739,9 +779,11 @@ Hedley et al (*in prep*) used the results of the habitat suitability map, combin
 
 [^1]: Note that this regional population estimate applies to the area covered by the habitat suitability map, not the OSR as a whole. 
 
-Using the larger grid size, which is based on an assumed effective ARU detection distance of 250-m, the total regional population size was estimated to be 1,597 males. With the smaller grid size, based on a effective detection distance of 150-m, the regional population estimate was 2,636 males. The table below summarizes these findings.
+Using the larger grid size, which is based on an assumed effective ARU detection distance of 250-m, the total regional population size was estimated to be 1,597 males. With the smaller grid size, based on a effective detection distance of 150-m, the regional population estimate was 2,636 males. To put these numbers in context, the only previous population estimate for Alberta was 500 pairs for the entire province, based on expert opinion. We now believe that the population in the OSR alone likely exceeds this population estimate. 
 
-```{r population-table, include=TRUE, echo=TRUE, message=FALSE, warning=FALSE, eval=TRUE}
+The table below summarizes these findings, with 90% confidence intervals in brackets.
+
+```{r population-table, include=TRUE, echo=FALSE, message=FALSE, warning=FALSE, eval=TRUE}
 
 df_population <- data.frame(
   "Grid" = c("802", "605", "802", "605", "802", "605"),
@@ -749,13 +791,13 @@ df_population <- data.frame(
   "Area" = c(41970, "-", 6745, "-", 48715, "-"),
   "Pct" = c(86.2, "-", 13.9, "-", 100, "-"),
   "Rails" = c(144, "-", 55, "-", 199, "-"),
-  "Pop" = c(1319, 2192, 278, 443, 1597, 2636),
-  "CI" = c("(300, 2985)", "(414, 5107)", "", "", "(394, 3560)", "(532, 6078)"))
+  "Pop" = c("1319 (300,2985)", "2192 (414,5107)", "278", "443", "1597 (394,3560)", "2636 (532,6078)"))
 
-kable(df_population, align = c("l", "r", "r", "r", "r", "r", "r"),
+kable(df_population, align = c("l", "r", "r", "r", "r", "r"),
       col.names = c("Grid Size (m)", "Lease Status", 
                     "Area (km2)", "% of Total Area", "# Rails Detected", 
-                    "Population Estimate", "90% CI"))
+                    "Pop Estimate"),
+      caption = "Estimated Yellow Rail population sizes.")
 
 ```
 
