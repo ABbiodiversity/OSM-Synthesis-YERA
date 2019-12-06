@@ -2,8 +2,8 @@
 
 library(lubridate)
 
-water=read.table('./data/base/WaterDepth2013To2018.txt', header=F, sep=',',
-                 stringsAsFactor=F)
+water=read.csv('./data/base/WaterDepth2013To2019.csv', stringsAsFactor=F)
+
 #Load station name conversion function.
 source('./data/base/AccessToWildtrax.R')
 colnames(water)=c('VegDate', 'Plot', 'Distance', 'Depth', 'StationKey')
@@ -52,7 +52,10 @@ water$Distance[water$Distance==99]=NA
 water$Distance[water$Plot %in% c("",'NE', 'NW','SE', 'SSW', 'SW')]=NA
 water$Distance[water$Plot %in% c('E', 'N', 'S', 'W') & water$Distance==0]=NA
 water$Distance[water$Plot == 'C' & water$Distance!=0]=NA
-water$Distance[water$Depth>105 | water$Depth<0]=NA
+#2019-12-06: changed from restricting to 101cm to restricting to <49cm because
+#I discovered that many data shetts have >50 as a value, which was
+#converted to 51. Not useful for change analysis.
+water$Distance[water$Depth>49 | water$Depth<0]=NA
 
 water=water[!is.na(water$Distance),]
 water=water[!is.na(water$Depth),]
