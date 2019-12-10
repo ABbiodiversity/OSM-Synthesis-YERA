@@ -28,10 +28,10 @@ data$julian=as.POSIXlt(data$VegDate)$yday+1
 
 #Now going to subset west data.
 
-SurveyData=read.csv('./data/processed/yera_occupy_2013-18_new.csv', header=T, stringsAsFactors=F)
+SurveyData=read.csv('./data/processed/yera_occupy_2013-19_new.csv', header=T, stringsAsFactors=F)
 
-region='WEST'
-for(region in c('WEST', 'EAST', 'unmineable')) {
+region='west'
+for(region in c('west', 'east', 'unmineable')) {
   Stations=sort(unique(SurveyData$ss[SurveyData$region==region]))
 
   Subset=data[data$WTStation %in% Stations,]
@@ -67,8 +67,8 @@ for(region in c('WEST', 'EAST', 'unmineable')) {
     newdata2$julian=0
     newdata[,paste0('x',k)]=exp(predict(fm1, newdata2, type='response'))-1
   }
-  jpeg(paste0(region, 'WaterDepthByYear.jpeg'), res=500, width=5, height=5, units='in')
-  boxplot(newdata[,paste0('x',Ys)], yaxs='i', ylim=c(0,20))
+  jpeg(paste0('./results/',region, 'WaterDepthByYear.jpeg'), res=500, width=5, height=5, units='in')
+  boxplot(newdata[,paste0('x',Ys)], yaxs='i', ylim=c(0,20), cex.axis=0.8)
   dev.off()
 
   x=Subset[Subset$year==2015,]
