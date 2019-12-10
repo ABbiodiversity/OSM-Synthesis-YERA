@@ -14,9 +14,7 @@
       </HistItem>
     </Histograms>
     <Metadata>
-      <MDI key="RepresentationType">THEMATIC</MDI>
       <MDI key="STATISTICS_COVARIANCES">3.016706464060101</MDI>
-      <MDI key="STATISTICS_EXCLUDEDVALUES"></MDI>
       <MDI key="STATISTICS_MAXIMUM">8</MDI>
       <MDI key="STATISTICS_MEAN">2.1101636899209</MDI>
       <MDI key="STATISTICS_MINIMUM">0</MDI>
