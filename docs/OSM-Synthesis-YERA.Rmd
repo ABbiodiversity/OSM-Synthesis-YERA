@@ -80,10 +80,10 @@ sf_lease <- st_read(here("./data/base/spatial/AB_lease-sites.shp"), quiet = TRUE
 # Site metadata
 df_meta <- read_csv(here("./data/lookup/yera_ss-meta_2013-18.csv"))
 # YERA occupancy
-df_occupy <- read_csv(here("./data/processed/yera_occupy_2013-18_new.csv"))
+df_occupy <- read_csv(here("./data/processed/yera_occupy_2013-19_new.csv"))
 
 # Occupancy modeling output
-load(here("./beta/results/MultiYearOccupancyOutput_new.RData"))
+load(here("./results/occupancy/MultiYearOccupancyOutput_2013-19.RData"))
 
 ```
 <br>
@@ -317,6 +317,7 @@ plot1 <- df_output %>%
   geom_errorbar(aes(y = Predicted, ymin = lower, ymax = upper, color = region), 
                 width = 0.15) +
   scale_y_continuous(breaks = seq(0, 1, 0.2), limits = c(0, 1)) +
+  scale_x_continuous(breaks = seq(2013, 2019, 1)) +
   theme_bw() +
   labs(x = "Year",
        y = "Detection Probability",
@@ -352,6 +353,7 @@ plot2 <- df_output %>%
                 width = 0.15, color = "cornflowerblue") +
   scale_color_manual(values = "cornflowerblue") +
   scale_y_continuous(breaks = seq(0, 1, 0.2), limits = c(0, 1)) +
+  scale_x_continuous(breaks = seq(2013, 2019, 1)) +
   theme_bw() +
   labs(x = "Year",
        y = "Detection Probability",
@@ -389,6 +391,7 @@ plot3 <- df_output %>%
   geom_errorbar(aes(y = Predicted, ymin = lower, ymax = upper, color = region), 
                 width = 0.15) +
   scale_y_continuous(breaks = seq(0, 1, 0.2), limits = c(0, 1)) +
+  scale_x_continuous(breaks = seq(2013, 2018, 1)) +
   theme_bw() +
   labs(x = "Year",
        y = "Probability",
@@ -463,15 +466,16 @@ Occupancy, adjusted for imperfect detection, is estimated for each of the four r
 
 df_output_occ <- OUT %>%
   map(~ data.frame(.x[1])) %>%
-  map_dfr(~ rownames_to_column(.x[1:6], var = "status"), .id = "region") %>%
-  gather(key = "year", value = "occupancy", Occupancy.1:Occupancy.6) %>%
+  map_dfr(~ rownames_to_column(.x[1:7], var = "status"), .id = "region") %>%
+  gather(key = "year", value = "occupancy", Occupancy.1:Occupancy.7) %>%
   mutate(year = case_when(
     year == "Occupancy.1" ~ "2013",
     year == "Occupancy.2" ~ "2014",
     year == "Occupancy.3" ~ "2015",
     year == "Occupancy.4" ~ "2016",
     year == "Occupancy.5" ~ "2017",
-    year == "Occupancy.6" ~ "2018"),
+    year == "Occupancy.6" ~ "2018",
+    year == "Occupancy.7" ~ "2019"),
          region = case_when(
     region == "East" ~ "Eastern McClelland Fen Mine",
     region == "West" ~ "Western McClelland Fen Mine",
@@ -491,7 +495,8 @@ plot5 <- df_output_occ %>%
   ggplot(mapping = aes(x = year, y = occupancy)) +
   geom_point(mapping = aes(color = region), size = 3.5) +
   geom_line(mapping = aes(color = region)) +
-  scale_y_continuous(breaks = seq(0, 0.6, 0.2), limits = c(0, 0.6)) +
+  scale_y_continuous(breaks = seq(0, 0.6, 0.2), limits = c(0, 0.7)) +
+  scale_x_continuous(breaks = seq(2013, 2019, 1)) +
   theme_bw() +
   labs(x = "Year",
        y = "Proportion of Sites Occupied",
@@ -529,6 +534,7 @@ plot6 <- df_output_occ %>%
   geom_line(aes(color = region)) +
   scale_color_manual(values = "cornflowerblue") +
   scale_y_continuous(breaks = seq(0, 0.4, 0.1), limits = c(0, 0.4)) +
+  scale_x_continuous(breaks = seq(2013, 2019, 1)) +
   theme_bw() +
   labs(x = "Year",
        y = "Proportion of Sites Occupied",
@@ -561,13 +567,13 @@ Preliminary work has been done to include water measurements in a model of Yello
 
 ```{r water-depth-mcclelland, include=TRUE, echo=FALSE, message=FALSE, warning=FALSE, eval=TRUE, out.width="50%", fig.show="hold", fig.cap="Water depth in the Western (left) and Eastern (right) McClelland Fen Mine, by year."}
 
-include_graphics(c(here("./results/WESTWaterDepthByYear.jpeg"), here("./results/EASTWaterDepthByYear.jpeg")))
+include_graphics(c(here("./results/figures/WESTWaterDepthByYear.jpeg"), here("./results/figures/EASTWaterDepthByYear.jpeg")))
 
 ```
 
 ``` {r water-depth-unmineable, include=TRUE, echo=FALSE, message=FALSE, warning=FALSE, eval=TRUE, out.width="50%", fig.cap="Water depth in the Unmineable region."}
 
-include_graphics(here("./results/unmineableWaterDepthByYear.jpeg"))
+include_graphics(here("./results/figures/unmineableWaterDepthByYear.jpeg"))
 
 ```
 

@@ -1,30 +1,39 @@
-# setwd("D:/School stuff/Manuscripts/YERA Trend/MultiYearOccupancy")
+#-------------------------------------------------------------------------------
+
+# Title: YERA Occupancy Modeling
+# Created: September 16, 2019
+
+# Objectives: Model Yellow Rail occupancy 2013-2019.
+
+# Script attempts to emulate the analysis here:
+# https://cran.r-project.org/web/packages/unmarked/vignettes/colext.pdf
+# Note one difference I made is to not code the number of years as T.
+# Instead I code it as Y, because T conflicts with TRUE, messed things up.
+
+#-------------------------------------------------------------------------------
+
+# Load packages
 library(unmarked)
 
-# Data=read.table("D:/School stuff/Manuscripts/YERA Trend/yera_occupy_2013-18.txt", header=TRUE, sep=',', stringsAsFactors=F)
+# Import data
 
-# Doy=read.table("D:/School stuff/Manuscripts/YERA Trend/yera_doy_2013-18.txt", sep=',', header=TRUE, stringsAsFactors=F)
+Data=read.table("./data/processed/yera_occupy_2013-19_new.csv", sep=',', header=T, stringsAsFactors=F)
 
-Data=read.table("./data/processed/yera_occupy_2013-18_new.csv", sep=',', header=T, stringsAsFactors=F)
+Doy=read.table("./data/processed/yera_doy_2013-19_new.csv", sep=',', header=T, stringsAsFactors=F)
 
-Doy=read.table("./data/processed/yera_doy_2013-18.csv", sep=',', header=T, stringsAsFactors=F)
+#-------------------------------------------------------------------------------
 
+# Analysis
 
-#Script attempts to emulate the analysis here:
-# https://cran.r-project.org/web/packages/unmarked/vignettes/colext.pdf
-#Note one difference I made is to not code the number of years as T.
-#Instead I code it as Y, because T conflicts with TRUE, messed things up.
+# Looping through the five different regional analyses that Erin did.
+#   1) LAPR region
+#   2) Mineable
+#   3) Non-mineable
+#   4) Western McLelland
+#   5) Eastern McLelland
 
-#Looping through the five different regional analyses that Erin did.
-#1) LAPR region
-#2) Mineable
-#3) Non-mineable
-#4) Western McLelland
-#5) Eastern McLelland
-
+# Define regions
 Regions=c('LAPR', 'Mine', 'NoMine', 'West', 'East')
-
-
 
 table(as.character(Data$region))
 
@@ -33,19 +42,19 @@ for(ww in 1:length(Regions)) {
   R=Regions[ww]
   print(paste0('Working on ',R))
   if(R=='LAPR') {Occ=Data}
-  if(R=='Mine') {Occ=Data[Data$region %in% c('mineable', 'WEST', 'EAST'),]}
+  if(R=='Mine') {Occ=Data[Data$region %in% c('mineable', 'west', 'east'),]}
   if(R=='NoMine') {Occ=Data[Data$region == 'unmineable',]}
-  if(R=='West') {Occ=Data[Data$region == 'WEST',]}
-  if(R=='East') {Occ=Data[Data$region == 'EAST',]}
+  if(R=='West') {Occ=Data[Data$region == 'west',]}
+  if(R=='East') {Occ=Data[Data$region == 'east',]}
 
-  Stations=sort(unique(Occ$ss)) #Stations
+  Stations=sort(unique(Occ$ss)) # Stations
 
-  M <- length(Stations) #Number of stations
+  M <- length(Stations) # Number of stations
 
-  J <- 4 #Visits per station per year
+  J <- 4 # Visits per station per year
 
   Years=sort(unique(Occ$year))
-  Y <- length(Years) #Number of years
+  Y <- length(Years) # Number of years
 
   psi <- rep(NA, Y)
 
@@ -55,7 +64,7 @@ for(ww in 1:length(Regions)) {
                                                  1:J, Years))
 
 
-  #Now to fill the array with the required observations.
+  # Now to fill the array with the required observations.
 
   for(i in 1:length(Stations)) {
     S=Stations[i]
@@ -81,10 +90,9 @@ for(ww in 1:length(Regions)) {
     numPrimary=Y)
   #summary(simUMF)
 
-  #Simple occupancy model where all parameters don't depend on time.
+  # Simple occupancy model where all parameters don't depend on time.
   # I interpret this as assuming a constant extinction probability???
-  #Not entirely sure on interpretation,
-  #but I don't think this is the model we want.
+  # Not entirely sure on interpretation, but I don't think this is the model we want.
 
 
   #m0 <- colext(psiformula= ~1, gammaformula = ~ 1, epsilonformula = ~ 1,
@@ -144,5 +152,8 @@ for(ww in 1:length(Regions)) {
   }
 }
 
-# save(OUT, file='./beta/results/MultiYearOccupancyOutput_new.RData')
+# Save outputs
+
+save(OUT, file='./results/occupancy/MultiYearOccupancyOutput_2013-19.RData')
+
 # save(MODELS, file='MultiYearOccupancyModels.RData')
