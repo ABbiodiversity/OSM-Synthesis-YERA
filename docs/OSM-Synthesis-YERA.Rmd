@@ -342,6 +342,7 @@ plot1
 
 ```
 <br>
+
 ``` {r detection-full, include=TRUE, echo=FALSE, message=FALSE, warning=FALSE, eval=TRUE, out.width="70%", fig.cap="Estimated Yellow Rail detection probability through the full study region."}
 
 plot2 <- df_output %>%
@@ -555,7 +556,7 @@ plot6
 ```
 <br>
 
-One aspect of the data worth noting is the drop in occupancy rates in 2018 in the Western McLelland fen. Occupancy rates were approximately 0.45 in 2017, and dropped to 0 in 2018. This may be a cause for concern from a conservation perspective, as this section of wetland is adjacent to ongoing developments (Suncor Fort Hills mine). However, a causal link cannot yet be drawn for a few reasons. First, consistent with the existing literature on this species, Yellow Rail occupancy fluctuates greatly year-to-year in individual wetlands. Linking changes in occupancy to causal mechanisms is complicated by the inherent noisiness of the data. Second, the potential decline occurred only in the most recent year; until 2018, the number of occupied Yellow Rail sites had been consistently increasing in the Mineable region. Additional years of data would be helpful to assess whether this represents a change in habitat suitability or simply natural fluctuations. In fact, data from 2013 also showed low occupancy rates in the western fen, suggesting 2018 may not have been anomalous. Data from 2019 have been collected and will help answer these questions, but monitoring in 2020 and beyond will likely be needed to draw strong conclusions.
+One aspect of the data worth noting is the drop in occupancy rates in 2018 in the Western McLelland fen. Occupancy rates were approximately 0.45 in 2017, and dropped to 0 in 2018. This may be a cause for concern from a conservation perspective, as this section of wetland is adjacent to ongoing developments (Suncor Fort Hills mine). However, a causal link cannot yet be drawn for a few reasons. First, consistent with the existing literature on this species, Yellow Rail occupancy fluctuates greatly year-to-year in individual wetlands. Linking changes in occupancy to causal mechanisms is complicated by the inherent noisiness of the data. Second, the potential decline occurred only in the most recent year; until 2018, the number of occupied Yellow Rail sites had been consistently increasing in the Mineable region. Additional years of data would be helpful to assess whether this represents a change in habitat suitability or simply natural fluctuations. In fact, data from 2013 also showed low occupancy rates in the western fen, suggesting 2018 may not have been anomalous. Data from 2019 showed occupancy remained low in the mineable region and increased at the more southerly sites. We caution that the increase in more southerly sites is partially an artifact of reduced sampling caused by a reduced budget. We priortized visiting sites  in southern regions in 2019 that have more consistently had Yellow Rails.
 
 ### Further Analysis
 
@@ -583,18 +584,27 @@ Distance to mine edge has also been hypothesized as an important predictor of Ye
 
 ```{r mine-encroach-gif, include=FALSE, echo=FALSE, message=FALSE, warning=FALSE, eval=FALSE}
 
-sf_mine <- st_read("./data/base/spatial/mine-encroachment.shp") %>%
-  mutate(YEAR = ifelse(YEAR == 0, 2018, YEAR)) 
+sf_mine <- st_read(here("./data/base/spatial/mine-encroachment.shp")) %>%
+  mutate(YEAR = ifelse(YEAR == 0, 2018, YEAR))  %>%
+  st_transform("+init=epsg:4326")
 
-sf_sites <- test %>%
+sf_2019 <- sf_mine %>%
+  filter(YEAR == "2018") %>%
+  mutate(YEAR = 2019)
+
+sf_mine_all <- sf_mine %>%
+  rbind(sf_2019)
+
+sf_sites <- df_occ_summary %>%
   rename(YEAR = year) %>%
   filter(wetland == "McClelland Lake Fen - West" | wetland == "McClelland Lake Fen - East") %>%
   rename(`Rail Detection` = yera_occupied) %>%
-  mutate(`Rail Detection` = fct_relevel(`Rail Detection`, c("NOT SURVEYED", "FALSE", "TRUE")))
+  mutate(`Rail Detection` = fct_relevel(`Rail Detection`, c("NOT SURVEYED", "FALSE", "TRUE"))) %>%
+  st_as_sf(coords = c("long", "lat"), crs = "+init=epsg:4326")
 
 encroach <- ggplot(data = sf_sites) +
   geom_sf(aes(color = `Rail Detection`, fill = `Rail Detection`), size = 2) +
-  geom_sf(data = sf_mine, fill = "grey80", color = "black") +
+  geom_sf(data = sf_mine_all, fill = "grey80", color = "black") +
   scale_color_manual(values = c("grey40", "#7f2704", "#dbdb1a")) +
   scale_fill_manual(values = c("grey40", "#7f2704", "#dbdb1a")) +
   theme_void() +
@@ -603,6 +613,8 @@ encroach <- ggplot(data = sf_sites) +
         legend.position = "bottom",
         plot.title = element_text(size = 22, face = "bold")) +
   transition_manual(YEAR)
+
+anim_save(here("./docs/pics/encroach.gif"))
 
 ```
 
