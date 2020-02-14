@@ -618,7 +618,7 @@ anim_save(here("./docs/pics/encroach.gif"))
 
 ```
 
-```{r mine-encroach, include=TRUE, echo=FALSE, message=FALSE, warning=FALSE, eval=TRUE, out.width="60%", fig.cap="Patterns of Yellow Rail presence in relation to mine footprint between 2013 and 2018."}
+```{r mine-encroach, include=TRUE, echo=FALSE, message=FALSE, warning=FALSE, eval=TRUE, out.width="60%", fig.cap="Patterns of Yellow Rail presence in relation to mine footprint between 2013 and 2019."}
 
 include_graphics(here("./docs/pics/encroach.gif"))
 
