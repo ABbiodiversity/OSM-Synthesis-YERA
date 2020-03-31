@@ -370,7 +370,7 @@ plot2 <- df_output %>%
   
 plot2
 
-# ggsave(here("./docs/pics/detection-full.png"))
+#ggsave(here("./docs/pics/detection-full.png"))
 
 ```
 <br>
@@ -415,7 +415,7 @@ plot3 <- df_output %>%
 
 plot3
 
-# ggsave(here("./docs/pics/extinction-colonization-comb.png"))
+#ggsave(here("./docs/pics/extinction-colonization-comb.png"))
 
 ```
 <br>
@@ -519,7 +519,7 @@ plot5 <- df_output_occ %>%
 
 plot5
 
-# ggsave(here("./docs/pics/occ-comb.png"))
+#ggsave(here("./docs/pics/occ-comb.png"))
 
 ```
 <br>
@@ -551,7 +551,7 @@ plot6 <- df_output_occ %>%
 
 plot6
 
-# ggsave(here("./docs/pics/occ-full.png"))
+ggsave(here("./docs/pics/occ-full.png"))
 
 ```
 <br>
@@ -603,18 +603,24 @@ sf_sites <- df_occ_summary %>%
   st_as_sf(coords = c("long", "lat"), crs = "+init=epsg:4326")
 
 encroach <- ggplot(data = sf_sites) +
-  geom_sf(aes(color = `Rail Detection`, fill = `Rail Detection`), size = 2) +
+  geom_sf(aes(color = `Rail Detection`, fill = `Rail Detection`), size = 1) +
   geom_sf(data = sf_mine_all, fill = "grey80", color = "black") +
   scale_color_manual(values = c("grey40", "#7f2704", "#dbdb1a")) +
   scale_fill_manual(values = c("grey40", "#7f2704", "#dbdb1a")) +
   theme_void() +
-  labs(title = 'Year: {current_frame}') +
-  theme(legend.title = element_text(size = 18),
+  facet_wrap(~ YEAR) +
+  #labs(title = 'Year: {current_frame}') +
+  theme(legend.title = element_text(size = 10),
+        legend.text = element_text(size = 8),
+        legend.spacing = unit(0, "cm"),
         legend.position = "bottom",
-        plot.title = element_text(size = 22, face = "bold")) +
-  transition_manual(YEAR)
+        plot.title = element_text(size = 12, face = "bold")) #+
+  #transition_manual(YEAR)
 
-anim_save(here("./docs/pics/encroach.gif"))
+#grid.draw(shift_legend(encroach))
+#ggsave(here("./docs/pics/mine-encroach-2019.png"), dpi = 500)
+
+#anim_save(here("./docs/pics/encroach.gif"))
 
 ```
 

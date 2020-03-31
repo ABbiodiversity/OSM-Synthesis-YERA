@@ -1,7 +1,7 @@
 ---
 title: "Yellow Rail in Alberta's Oil Sands Region"
 author: Richard Hedley^[Department of Biological Sciences, rhedley@ualberta.ca], Marcus Becker^[ABMI, mabecker@ualberta.ca], Erin Bayne^[Department of Biological Sciences, bayne@ualberta.ca]
-date: "October 22, 2019"
+date: "March 30, 2020"
 output:
   bookdown::pdf_document2:
     number_sections: yes
@@ -67,7 +67,7 @@ Identification of new sites can be accomplished by visiting sites of high predic
 
 + **Refine population estimates**
 
-Existing population estimates put the population of Yellow Rail at 10,000 - 25,000 individuals globally. The population in Alberta has been estimated at 500 pairs. However, this is likely an underestimate, because recent surveys have found nearly 300 males (with an assumed equal number of females) in the surveyed areas of the OSR, which itself covers only about 20% of the province (E.Bayne, unpublished data). The degree of underestimation remains unknown and is the focus of ongoing work. In this report we present preliminary results from Hedley et al. (*in prep*) that report a new regional population estimate for the species based on monitoring from 2013-2018. 
+Existing population estimates put the population of Yellow Rail at 10,000 - 25,000 individuals globally. The population in Alberta has been estimated at 500 pairs. However, this is likely an underestimate, because recent surveys have found nearly 300 males (with an assumed equal number of females) in the surveyed areas of the OSR, which itself covers only about 20% of the province (E.Bayne, unpublished data). The degree of underestimation remains unknown and is the focus of ongoing work. In this report we present preliminary results from Hedley et al. (*in prep*) that report a new regional population estimate for the species based on monitoring from 2013-2019. 
 
 + **Continue research on movement ecology**
 
@@ -101,9 +101,9 @@ In addition to visiting new sites, we have resurveyed previous survey locations,
 
 ## Key Breeding Sites in the OSR
 
-We set out to identify and monitor key Yellow Rail breeding sites in the OSR, as per our first objective. Figure \@ref(fig:survey-sites) below displays the location of sites surveyed for Yellow Rail between 2013-2018. Seven regionally important wetlands (or wetland complexes) are listed in Table 1, and are the source of 249 of 286 (87%) of the individual males detected from 2013 to 2018 via acoustic surveys. The Eastern and Western McClelland Fen Mine sites, represented by the cluster of sites north of Fort McMurray, have together produced 118 (41%) detections over the period surveyed. No other wetland site has so far been found to contain more than 10 individuals. For smaller wetlands, the number of detected males may represent a reasonable population estimate of males at the wetland; however, for larger wetlands where only a portion of the wetland has been sampled, this is likely an underestimate.   
+We set out to identify and monitor key Yellow Rail breeding sites in the OSR, as per our first objective. Figure \@ref(fig:survey-sites) below displays the location of sites surveyed for Yellow Rail between 2013-2019. Seven regionally important wetlands (or wetland complexes) are listed in Table 1, and are the source of 249 of 286 (87%) of the individual males detected from 2013 to 2018 via acoustic surveys. The Eastern and Western McClelland Fen Mine sites, represented by the cluster of sites north of Fort McMurray, have together produced 118 (41%) detections over the period surveyed. No other wetland site has so far been found to contain more than 10 individuals. For smaller wetlands, the number of detected males may represent a reasonable population estimate of males at the wetland; however, for larger wetlands where only a portion of the wetland has been sampled, this is likely an underestimate.   
 
-```{r survey-sites, include=TRUE, echo=FALSE, message=FALSE, warning=FALSE, eval=TRUE, out.width="75%", fig.cap="Yellow Rail survey sites visited between 2013-2018. The grey polygon is the Lower Athabasca planning region."}
+```{r survey-sites, include=TRUE, echo=FALSE, message=FALSE, warning=FALSE, eval=TRUE, out.width="75%", fig.cap="Yellow Rail survey sites visited between 2013-2019. The grey polygon is the Lower Athabasca planning region."}
 
 include_graphics(here("./docs/pics/survey-sites.png"))
 
@@ -192,7 +192,7 @@ include_graphics(here("./docs/pics/occ-full.png"))
 
 ```
 
-One aspect of the data worth noting is the drop in occupancy rates in 2018 in the Western McLelland fen. Occupancy rates were approximately 0.45 in 2017, and dropped to 0 in 2018. This may be a cause for concern from a conservation perspective, as this section of wetland is adjacent to ongoing developments (Suncor Fort Hills mine). However, a causal link cannot yet be drawn for a few reasons. First, consistent with the existing literature on this species, Yellow Rail occupancy fluctuates greatly year-to-year in individual wetlands. Linking changes in occupancy to causal mechanisms is complicated by the inherent noisiness of the data. Second, the potential decline occurred only in the most recent year; until 2018, the number of occupied Yellow Rail sites had been consistently increasing in the Mineable region. Additional years of data would be helpful to assess whether this represents a change in habitat suitability or simply natural fluctuations. In fact, data from 2013 also showed low occupancy rates in the western fen, suggesting 2018 may not have been anomalous. Data from 2019 have been collected and will help answer these questions, but monitoring in 2020 and beyond will likely be needed to draw strong conclusions.
+One aspect of the data worth noting is the drop in occupancy rates in 2018 in the Western McLelland fen. Occupancy rates were approximately 0.45 in 2017, and dropped to 0 in 2018. This may be a cause for concern from a conservation perspective, as this section of wetland is adjacent to ongoing developments (Suncor Fort Hills mine). However, a causal link cannot yet be drawn for a few reasons. First, consistent with the existing literature on this species, Yellow Rail occupancy fluctuates greatly year-to-year in individual wetlands. Linking changes in occupancy to causal mechanisms is complicated by the inherent noisiness of the data. Second, the potential decline occurred only in the most recent year; until 2018, the number of occupied Yellow Rail sites had been consistently increasing in the Mineable region. Additional years of data would be helpful to assess whether this represents a change in habitat suitability or simply natural fluctuations. In fact, data from 2013 also showed low occupancy rates in the western fen, suggesting 2018 may not have been anomalous. Data from 2019 showed occupancy remained low in the mineable region and increased at the more southerly sites. We caution that the increase in more southerly sites is partially an artifact of reduced sampling caused by a reduced budget. We priortized visiting sites in southern regions in 2019 that have more consistently had Yellow Rails.
 
 ### Further Analysis
 
@@ -204,21 +204,21 @@ Preliminary work has been done to include water measurements in a model of Yello
 
 ```{r water-depth-mcclelland, include=TRUE, echo=FALSE, warning=FALSE, message=FALSE, eval=TRUE, fig.show='hold', fig.align='center', out.width="49%", fig.cap="Predicted water depth by year in the McClelland Lake Fen West (left) and East (right)."}
 
-include_graphics(here("results", c("WESTWaterDepthByYear.jpeg", "EASTWaterDepthByYear.jpeg")))
+include_graphics(here("results/figures", c("WESTWaterDepthByYear.jpeg", "EASTWaterDepthByYear.jpeg")))
 
 ```
 
 ```{r water-depth-unmineable, include=TRUE, echo=FALSE, message=FALSE, warning=FALSE, eval=TRUE, out.width="50%", fig.cap="Predicted water depth by year in the Unmineable region."}
 
-include_graphics(here("./results/unmineableWaterDepthByYear.jpeg"))
+include_graphics(here("./results/figures/unmineableWaterDepthByYear.jpeg"))
 
 ```
 
 Distance to mine edge has also been hypothesized as an important predictor of Yellow Rail occupancy at surveyed sites. The map below outlines how mine footprint (ABMI, 2017) has changed near McClelland Lake (both west and east portions of the fen) throughout the study period, along with variation in site occupancy. Mine encroachment does not appear to alter spatial patterns of rail occupancy, as detections are found both close to and far from mine edges. However, further work will be required to test this effect. Figure \@ref(fig:mine-encroach) below shows how oil sands mine footprint has changed over the study period around McClelland Lake fen.  
 
-```{r mine-encroach, include=TRUE, echo=FALSE, warning=FALSE, message=FALSE, eval=TRUE, out.width="100%", fig.cap="Oil sands mine encroachment near McClelland Lake Fen from 2013-2018. Yellow Rail survey sites are represented by the points, and colored by whether a Rail was detected."}
+```{r mine-encroach, include=TRUE, echo=FALSE, warning=FALSE, message=FALSE, eval=TRUE, out.width="100%", fig.cap="Oil sands mine encroachment near McClelland Lake Fen from 2013-2019. Yellow Rail survey sites are represented by the points, and colored by whether a Rail was detected."}
 
-include_graphics(here("./docs/pics/mine-encroach.png"))
+include_graphics(here("./docs/pics/mine-encroach-2019.png"))
 
 ```
 
