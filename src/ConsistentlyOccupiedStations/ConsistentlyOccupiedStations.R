@@ -65,7 +65,7 @@ rm(list=ls()[ls()!='OUT'])
 
 OUT$Proportion=round(OUT$OccupiedYears/OUT$SurveyedYears, 2)
 
-write.csv(OUT, 'ConsistentlyOccupiedStations.csv', row.names=F)
+write.csv(OUT, './src/ConsistentlyOccupiedStations/ConsistentlyOccupiedStations.csv', row.names=F)
 
 #Summary info below:
 table(OUT$Consistent) #22 consistently occupied stations, 145 inconsistent.
