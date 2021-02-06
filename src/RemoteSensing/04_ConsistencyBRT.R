@@ -7,11 +7,11 @@ library(dplyr)
 library(dismo)
 library(gbm)
 library(ggthemes)
+library(factoextra)
 
 ################################################
 #load rs data, collapse by station.
 ################################################
-rs = read.csv('./data/processed/rs_annual_2013-19.csv', stringsAsFactors=F)
 
 #load rs data.
 rs = read.csv('./data/processed/rs_annual_2013-19.csv', stringsAsFactors=F)
