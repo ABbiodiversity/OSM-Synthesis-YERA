@@ -84,20 +84,42 @@ rs = rs[!is.na(rs$presence),]
 rs = rs[!is.na(rs$B2),]
 
 
-y$random=NA
+# y$random=NA
+# sum(y$ss %in% rs$ss)
+# set.seed(1546)
+# for(i in 1:nrow(y)) {
+#   S = y$ss[i]
+#   if(!S %in% rs$ss) {next}
+#   sub = rs[rs$ss == S,]
+#   years = as.character(unique(sub$year))
+#   chosen = sample(years, 1)
+#   y$random[i]=chosen
+# }
+
+sum(is.na(y$random))
+
+#Adding "best" year selection rather than total randomness.
+y=read.csv('./data/processed/spatial_clusters.csv', stringsAsFactors=F)
+
+y$best=NA
 sum(y$ss %in% rs$ss)
-set.seed(1546)
+set.seed(2051)
+i=1
 for(i in 1:nrow(y)) {
   S = y$ss[i]
   if(!S %in% rs$ss) {next}
   sub = rs[rs$ss == S,]
-  years = as.character(unique(sub$year))
-  chosen = sample(years, 1)
-  y$random[i]=chosen
+  if(max(sub$occupied)==1) {
+    sub = sub[sub$occupied==1,] #Throw out unoccupied years.
+    years = as.character(unique(sub$year))
+    chosen = sample(years, 1)
+    y$best[i]=chosen
+  } else {
+    chosen = y$random[i] #If there are no occupied years, then stick with the original random year.
+    y$best[i]=chosen
+  }
 }
-
-sum(is.na(y$random))
-
+sum(y$random != y$best, na.rm=T) #129 station years changed, so this might actually help things.
 
 write.csv(y, './data/processed/spatial_clusters.csv', row.names=F)
 
