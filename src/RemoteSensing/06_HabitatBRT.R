@@ -18,6 +18,8 @@
 #install_github("fabsig/gpboost") #Couldn't get this to work.
 library(dismo)
 library(gbm)
+library(factoextra)
+library(sjstats)
 
 ##########################
 #Load the data.
@@ -159,11 +161,55 @@ rand$diffs2018 = rand$pred2018-rand$pred2017
 rand$diffs2019 = rand$pred2019-rand$pred2018
 boxplot(rand[,paste0('diffs', 2014:2019)])
 
+rand = rand[,c('ss', paste0('pred', 2013:2019), paste0('diffs', 2014:2019))]
+
+#write.csv(rand, './data/processed/BRT_habitat_predictions_2013-19.csv', row.names=F)
 
 
-
-
-
+# # Want to check something: Pred values seem to show similar patterns to PC1 values
+# # over time.
+# # So what is going on here? Want to check if the two are directly correlated, in which
+# # case the BRT would really be doing nothing fancy.
+# # I checked this, and the conclusion was that the BRT is correlated, but loosely, so it seems to
+# # be doing more than PC regression would.
+#
+# rand[paste0('PC1',2013:2019)]=NA
+# rand[paste0('PC2',2013:2019)]=NA
+#
+# y=prcomp(data[,rsVars], scale=T)
+# z=fviz_eig(y)
+# sum(z$data$eig[1:2])
+# y$rotation
+#
+# res.pt <- get_pca_ind(y)
+# data$PC1 = res.pt$coord[,1]
+# data$PC2 = res.pt$coord[,2]
+#
+# for(i in 1:nrow(data)) {
+#   S= data$ss[i]
+#   year = data$year[i]
+#   PCs = c(data$PC1[i], data$PC2[i])
+#   rand[rand$ss==S,paste0('PC1',year)]=PCs[1]
+#   rand[rand$ss==S,paste0('PC2',year)]=PCs[2]
+# }
+#
+#
+# plot(as.matrix(rand[,paste0('pred', 2013:2019)]), as.matrix(rand[,paste0('PC1', 2013:2019)]))
+#
+# plot(as.matrix(rand[,paste0('pred', 2013:2019)]), as.matrix(rand[,paste0('PC2', 2013:2019)]))
+#
+# #The above plots show that in fact the predicted values and PC values are only loosely correlated.
+# #So that's good - it means the BRT appears to be doing more than simply exploiting the PC scores.
+#
+# #Below here looking at the amount of variation attributable to between years vs between stations.
+# #Long story short, about 2x as much variation between stations as between years.
+# boxplot(rand[,'PC12013'] ~ rand$ss)
+#
+# stacked = stack(rand[,paste0('PC1', 2013:2019)])
+# stacked$ss = rep(rand$ss, 7)
+# ANOVA=aov(values ~ ind + ss, data = stacked)
+# anova_stats(ANOVA)
+# summary(ANOVA)
 
 
 
