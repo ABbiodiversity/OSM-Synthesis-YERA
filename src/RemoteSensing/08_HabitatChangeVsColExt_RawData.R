@@ -1,13 +1,17 @@
 
 
+
 #This script will explore whether transitions from unoccupied to occupied and vice
 #versa are associated with positive or negative changes in habitat quality (BRT)
 
 
 data=read.csv('./data/processed/yera_occupy_2013-19_new.csv', stringsAsFactors=F)
 
-brt=read.csv('./data/processed/BRT_habitat_predictions_2013-19.csv', stringsAsFactors=F)
-
+brt=read.csv('./data/processed/BRT_habitat_predictions_best_2013-19.csv', stringsAsFactors=F)
+brt2=read.csv('./data/processed/BRT_habitat_predictions_2013-19.csv', stringsAsFactors=F)
+colnames(brt2)
+plot(as.matrix(brt[,2:8]), as.matrix(brt2[,2:8]))
+plot(as.matrix(brt[,9:14]), as.matrix(brt2[,9:14]))
 #Remove NAs for no surveys conducted.
 data = data[!is.na(data$occupied),]
 
@@ -76,17 +80,12 @@ par(mar=c(3,3,0.5,0.5))
 boxplot(exts$diff, cols$diff, names = c('Extinctions', 'Colonizations'), col=c('red', 'green'), axes=F)
 
 axis(side = 1, tck = -.015, at=c(1,2), labels = NA)
-axis(side = 2, tck = -.015, labels = NA, at=seq(-0.3,0.3,0.1))
-axis(side = 2, lwd = 0, line = -.4, las = 1, at=c(-0.3,-0.2, -0.1,0,0.1,0.2,0.3))
+axis(side = 2, tck = -.015, labels = NA, at=seq(-2,2,0.1))
+axis(side = 2, lwd = 0, line = -.4, las = 1, at=seq(-2,2,0.1))
 axis(side = 1, at=c(1,2), labels=c("Extinctions", "Colonizations"),
      line=0.3, lwd=0, cex.axis=1)
 
 mtext(side = 2, "Change in predicted occupancy", line = 2)
 box()
 dev.off()
-
-
-
-
-
 
