@@ -1,5 +1,12 @@
 
 
+#First section will examine whether predicted suitability is, on average, higher
+#for consistently occupied stations than inconsistently.
+#Fundamentally this is a spatial question, about whether better habitat is more
+#consistently occupied.
+
+
+
 ci = read.csv('./src/ConsistentlyOccupiedStations/ConsistentlyOccupiedStations.csv', stringsAsFactors=F)
 colnames(ci)[1]='ss'
 
@@ -36,7 +43,7 @@ axis(side = 2, lwd = 0, line = -.4, las = 1, at=seq(0,1,0.1))
 axis(side = 1, at=c(1,2,3), labels=c("Consistent", "Inconsistent", "Never"),
      line=-0.2, lwd=0, cex.axis=1)
 
-mtext(side = 2, "Predicted mean occupancy rate", line = 2)
+mtext(side = 2, "Mean of predicted occupancy rate", line = 2)
 box()
 
 
@@ -47,23 +54,26 @@ axis(side = 2, lwd = 0, line = -.4, las = 1, at=seq(0,1,0.1))
 axis(side = 1, at=c(1,2,3), labels=c("Consistent", "Inconsistent", "Never"),
      line=-0.2, lwd=0, cex.axis=1)
 
-mtext(side = 2, "Predicted SD of occupancy rate", line = 2)
+mtext(side = 2, "SD of predicted occupancy rate", line = 2)
 box()
 dev.off()
 
-jpeg('./results/figures/RS_PrComp2_ConsIncons.jpeg', width=4, height=4, res=500, units='in')
-par(mar=c(2.5,3,0.5,0.5))
-boxplot(-PC2Mean~Consistent, data=noNever, axes=F, col=c('green', 'yellow'))
+#Commented this out, it was looking at principal component 2.
+# jpeg('./results/figures/RS_PrComp2_ConsIncons.jpeg', width=4, height=4, res=500, units='in')
+# par(mar=c(2.5,3,0.5,0.5))
+# boxplot(-PC2Mean~Consistent, data=noNever, axes=F, col=c('green', 'yellow'))
+#
+# axis(side = 1, tck = -.015, at=c(1,2,3), labels = NA)
+# axis(side = 2, tck = -.015, labels = NA, at=seq(-8,8,2))
+# axis(side = 2, lwd = 0, line = -.4, las = 1, at=seq(-8,8,2))
+# axis(side = 1, at=c(1,2), labels=c("Consistent", "Inconsistent"),
+#      line=-0.2, lwd=0, cex.axis=1)
+#
+# mtext(side = 2, "Principal Component 2 (veg. health)", line = 2)
+# box()
+#
+# dev.off()
 
-axis(side = 1, tck = -.015, at=c(1,2,3), labels = NA)
-axis(side = 2, tck = -.015, labels = NA, at=seq(-8,8,2))
-axis(side = 2, lwd = 0, line = -.4, las = 1, at=seq(-8,8,2))
-axis(side = 1, at=c(1,2), labels=c("Consistent", "Inconsistent"),
-     line=-0.2, lwd=0, cex.axis=1)
 
-mtext(side = 2, "Principal Component 2 (veg. health)", line = 2)
-box()
-
-dev.off()
 
 
