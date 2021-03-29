@@ -19,10 +19,10 @@ vars = colnames(rs)[16:26]
 
 jpeg('./results/figures/PresenceAbsenceVsLandsat.jpeg', width=7, height=8, res=500, units='in')
 par(mfrow=c(4,3))
-par(mar=c(2,4.3,0.5,0.5))
+par(mar=c(3.5,4.3,0.5,0.5))
 for(i in 1:11) {
   formula=rs[,vars[i]] ~ rs$presence
-  boxplot(formula, ylab=NA, axes=F, col='gray')
+  boxplot(formula, ylab=NA, axes=F, col='gray', xlab=NA)
   axis(side=1, at=c(1,2), labels=c('absent', 'present'))
   axis(side=2, las=1)
   mtext(side = 2, vars[i], line = 3.2)
