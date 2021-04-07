@@ -5,7 +5,7 @@
 library(factoextra)
 
 #load rs data.
-rs = read.csv('./data/processed/rs_annual_2013-19.csv', stringsAsFactors=F)
+rs = read.csv('./data/processed/rs_annual_dateCorrected_2013-19.csv', stringsAsFactors=F)
 #load consistently occupied classification.
 ci = read.csv('./src/ConsistentlyOccupiedStations/ConsistentlyOccupiedStations.csv', stringsAsFactors=F)
 colnames(ci)[colnames(ci)=='Station']='ss'
@@ -61,7 +61,8 @@ noNever = ci[ci$Consistent %in% c('Consistent', 'Inconsistent'),]
 
 rs2=rs[!is.na(rs$B2) & rs$ss %in% noNever$ss,]
 pc=prcomp(rs2[,cols], scale=T)
-fviz_eig(pc)
+z=fviz_eig(pc)
+z$data$eig[1]+z$data$eig[2]
 pc$rotation
 
 res.pt <- get_pca_ind(pc)
@@ -141,9 +142,11 @@ boxplot(noNever$meanPred ~ noNever$Consistent) #No apparent difference.
 
 #Make figures.
 
-jpeg('./results/figures/RS_PrComp_ByConsistency.jpeg', width=4, height=4, res=500, units='in')
+jpeg('./results/figures/RS_PrCompMean_ByConsistency.jpeg', width=8, height=4, res=500, units='in')
+par(mfrow=c(1,2))
 par(mar=c(2.5,3,0.5,0.5))
-boxplot(ci$PC1Mean ~ ci$Consistent, axes=F, col=c('green', 'yellow', 'red'))
+#Panel a: PC1 mean.
+boxplot(ci$PC1Mean ~ ci$Consistent, axes=F, col=c('darkgreen', 'orange', 'darkred'))
 
 axis(side = 1, tck = -.015, at=c(1,2,3), labels = NA)
 axis(side = 2, tck = -.015, labels = NA, at=seq(-8,8,2))
@@ -151,14 +154,69 @@ axis(side = 2, lwd = 0, line = -.4, las = 1, at=seq(-8,8,2))
 axis(side = 1, at=c(1,2,3), labels=c("Consistent", "Inconsistent", "Never"),
      line=-0.2, lwd=0, cex.axis=1)
 
-mtext(side = 2, "Principal Component 1 (Brightness)", line = 2)
+mtext(side = 2, "PC 1 (Brightness)", line = 2)
 box()
+legend('topleft', legend='a) PC1 Mean', bty='n')
+
+#Panel b: PC2 mean.
+boxplot(ci$PC2Mean ~ ci$Consistent, axes=F, col=c('darkgreen', 'orange', 'darkred'))
+
+axis(side = 1, tck = -.015, at=c(1,2,3), labels = NA)
+axis(side = 2, tck = -.015, labels = NA, at=seq(-8,8,2))
+axis(side = 2, lwd = 0, line = -.4, las = 1, at=seq(-8,8,2))
+axis(side = 1, at=c(1,2,3), labels=c("Consistent", "Inconsistent", "Never"),
+     line=-0.2, lwd=0, cex.axis=1)
+
+mtext(side = 2, "PC 2 (Veg. health)", line = 2)
+box()
+legend('topleft', legend='b) PC2 Mean', bty='n')
+dev.off()
+
+#Panel c: PC1 SD
+jpeg('./results/figures/RS_PrCompSD_ByConsistency.jpeg', width=8, height=4, res=500, units='in')
+par(mfrow=c(1,2))
+par(mar=c(2.5,3,0.5,0.5))
+boxplot(ci$PC1SD ~ ci$Consistent, axes=F, col=c('darkgreen', 'orange', 'darkred'))
+
+axis(side = 1, tck = -.015, at=c(1,2,3), labels = NA)
+axis(side = 2, tck = -.015, labels = NA, at=seq(-8,8,2))
+axis(side = 2, lwd = 0, line = -.4, las = 1, at=seq(-8,8,2))
+axis(side = 1, at=c(1,2,3), labels=c("Consistent", "Inconsistent", "Never"),
+     line=-0.2, lwd=0, cex.axis=1)
+
+mtext(side = 2, "PC 1 SD (Brightness)", line = 2)
+box()
+legend('topleft', legend='a) PC1 SD', bty='n')
+
+#Panel d: PC1 SD
+
+boxplot(ci$PC2SD ~ ci$Consistent, axes=F, col=c('darkgreen', 'orange', 'darkred'))
+
+axis(side = 1, tck = -.015, at=c(1,2,3), labels = NA)
+axis(side = 2, tck = -.015, labels = NA, at=seq(-8,8,2))
+axis(side = 2, lwd = 0, line = -.4, las = 1, at=seq(-8,8,2))
+axis(side = 1, at=c(1,2,3), labels=c("Consistent", "Inconsistent", "Never"),
+     line=-0.2, lwd=0, cex.axis=1)
+
+mtext(side = 2, "PC 2 SD (Veg. health)", line = 2)
+box()
+legend('topleft', legend='b) PC2 SD', bty='n')
+
 
 dev.off()
 
+#Mann whitney U tests
+
+wilcox.test(noNever$PC1Mean ~ noNever$Consistent)
+boxplot(noNever$PC1Mean ~ noNever$Consistent)
+wilcox.test(noNever$PC2Mean ~ noNever$Consistent)
+wilcox.test(noNever$PC1SD ~ noNever$Consistent)
+wilcox.test(noNever$PC2SD ~ noNever$Consistent)
+table(noNever$Consistent)
+
 jpeg('./results/figures/RS_PrComp2_ConsIncons.jpeg', width=4, height=4, res=500, units='in')
 par(mar=c(2.5,3,0.5,0.5))
-boxplot(-PC2Mean~Consistent, data=noNever, axes=F, col=c('green', 'yellow'))
+boxplot(-PC2Mean~Consistent, data=noNever, axes=F, col=c('darkgreen', 'orange'))
 
 axis(side = 1, tck = -.015, at=c(1,2,3), labels = NA)
 axis(side = 2, tck = -.015, labels = NA, at=seq(-8,8,2))

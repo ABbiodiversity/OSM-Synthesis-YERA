@@ -15,7 +15,8 @@
 #Going to try to explain the idea here.
 
 #1) Spatial clusters have been identified as points that are nearby one another. Each cluster
-#was >10km from all other clusters to ensure spatial separation.
+#was >10km from all other clusters to ensure spatial separation. Clusters were merged on April 1
+#to ensure that there were 10 final clusters (giving more even sample sizes).
 
 #2) leave out one cluster at a time as a test set. Use remainder as training/CV.
 
@@ -26,6 +27,9 @@
 #deltas associated with extinction.
 
 #4) iterate through each cluster so that all data is used.
+
+#Recent addition March 31, 2021: enforce spatially stratified cross validation during training
+#to give a better out of sample performance.
 
 #library(devtools)
 #install_github("fabsig/gpboost") #Couldn't get this to work.
@@ -50,18 +54,19 @@ data = data[!is.na(data$B2),]
 
 clusters = read.csv('./data/processed/spatial_clusters.csv', stringsAsFactors=F)
 
-data = merge(data, clusters[,c('ss', 'cluster', 'best')], by='ss')
+data = merge(data, clusters[,c('ss', 'mergedClusters', 'best')], by='ss')
+
 
 #select only data in the randomly chosen year. Prediction will still occur across years.
 rand = data[data$year == data$best,]
 
 
-table(clusters$cluster) #clusters contained between 4 and 216 points. The 216 point cluster is
+table(clusters$mergedClusters) #clusters contained between 4 and 216 points. The 216 point cluster is
 #McClelland fen.
 
 table(rand$best, rand$presence) #Pretty even ratio of presence:absence in each randomly selected year.
 #Which seems like a good thing.
-table(rand$cluster, rand$presence) #Some clusters have no yellow rails, which is fine.
+table(rand$mergedClusters, rand$presence) #Some clusters have no yellow rails, which is fine.
 #Importantly, no single cluster totally dominates the detections. There are most detections
 #in the cluster 2, but there are still significant numbers outside that cluster to work with (i.e.
 #when it is excluded from fitting, we should still have lots of data to work with).
@@ -92,12 +97,12 @@ rand[outputVars]=NA
 # in fact varied from one run to the next. I conclude that it probably doesn't much matter.
 # Tree complexity indicates the complexity of interactions allowable in the data.
 
-# lr=0.0005
+# lr=0.001
 # OUT=data.frame(ntrees=rep(NA,10), deviance=rep(NA,10))
 # set.seed(1)
 # for(i in 1:10) {
 #   fit <- gbm.step(rand, rsVars, response, family = "bernoulli", tree.complexity = i,
-#                   learning.rate = lr, bag.fraction = 0.5)
+#                   learning.rate = lr, bag.fraction = 0.5, fold.vector = rand$mergedClusters)
 #   length(fit$trees) #ensure >1000
 #   OUT$ntrees[i]=fit$n.trees
 #   OUT$deviance[i]=fit$cv.statistics$deviance.mean
@@ -106,18 +111,18 @@ rand[outputVars]=NA
 # plot(OUT$ntrees) #Greater complexity requires fewer trees. Makes sense.
 # plot(OUT)
 
-#Selected tc is 8.
-tc=8
+#Selected tc is 1.
+tc=1
 
 i=1
 set.seed(1)
 rand$cvAUC = NA
-for(i in 1:max(rand$cluster)) {
+for(i in 1:max(rand$mergedClusters)) {
   print(paste('Cluster', i))
-  test = rand[rand$cluster==i,]
+  test = rand[rand$mergedClusters==i,]
 
   #Select train data.
-  train = rand[rand$cluster!=i,]
+  train = rand[rand$mergedClusters!=i,]
 
   #Filter training data to randomly chosen years.
   train = train[train$year == train$best,]
@@ -133,11 +138,11 @@ for(i in 1:max(rand$cluster)) {
   trees = 0
   while(trees <1000) {
     fit <- gbm.step(train, rsVars, response, family = "bernoulli", tree.complexity = tc,
-                    learning.rate = lr, bag.fraction = 0.5)
+                    learning.rate = lr, bag.fraction = 0.5, fold.vector = as.numeric(as.factor(train$mergedClusters)),
+                    n.folds = length(unique(train$mergedClusters)), keep.fold.vector = TRUE)
     trees = fit$n.trees
     if(trees<1000) {lr=lr-0.0001}
   }
-
   #predict on the test data, then put it back into the original data.
   j=1
   for(j in 1:nrow(test)) {
@@ -150,11 +155,11 @@ for(i in 1:max(rand$cluster)) {
     }
   }
 
-  if(i==1) {forest = list(list(model=fit, cluster=i))} else {
-    forest = append(forest, list(list(model=fit, cluster=i)))
+  if(i==1) {forest = list(list(model=fit, mergedClusters=i))} else {
+    forest = append(forest, list(list(model=fit, mergedClusters=i)))
   }
   test$cvAUC = mean(fit$cv.roc.matrix)
-  rand[rand$cluster==i,] = test
+  rand[rand$mergedClusters==i,] = test
 }
 
 dev.off()
@@ -191,19 +196,18 @@ names(fit)
 mean(aggregate(cvAUC ~ cluster, data=rand, mean)[,2]) #Average cv AUC was 0.70.
 
 vals = c()
-for(i in 1:max(rand$cluster)) {
-  sub = rand[rand$cluster==i,]
+for(i in 1:max(rand$mergedClusters)) {
+  sub = rand[rand$mergedClusters==i,]
   y=roc(data=sub, response=presence, predictor=bestPred)
 }
-boxplot(bestPred ~ cluster, data=rand)
+boxplot(bestPred ~ mergedClusters, data=rand)
 #x=rand[rand$cluster==16,]
-boxplot(bestPred ~ occupied, data=rand)
 y=roc(data=rand, response=presence, predictor=bestPred) #56
 rand$AUC = y$auc
 
-rand = rand[,c('ss', paste0('pred', 2013:2019), paste0('diffs', 2014:2019), 'cvAUC','AUC')]
+rand = rand[,c('ss', paste0('pred', 2013:2019), paste0('diffs', 2014:2019), 'cvAUC', 'AUC')]
 
-#write.csv(rand, './data/processed/BRT_habitat_predictions_best_2013-19b.csv', row.names=F)
+#write.csv(rand, './data/processed/BRT_habitat_predictions_best_2013-19.csv', row.names=F)
 
 
 # # Want to check something: Pred values seem to show similar patterns to PC1 values

@@ -22,7 +22,7 @@ Data=read.table("./data/processed/yera_occupy_2013-19_new.csv", sep=',', header=
 
 Doy=read.table("./data/processed/yera_doy_2013-19_new.csv", sep=',', header=T, stringsAsFactors=F)
 
-brtData=read.csv('./data/processed/BRT_habitat_predictions_2013-19.csv', stringsAsFactors=F)
+brtData=read.csv('./data/processed/BRT_habitat_predictions_best_2013-19.csv', stringsAsFactors=F)
 
 #-------------------------------------------------------------------------------
 
@@ -126,9 +126,9 @@ for(ww in 1:length(Regions)) {
   #This is more like the model we want.
 
   m1 <- colext(psiformula = ~1, # First-year occupancy
-               gammaformula = ~ brt + year, # Colonization
-               epsilonformula = ~ brt + year, # Extinction
-               pformula = ~ year-1, # Detection
+               gammaformula = ~ brt + year-1, # Colonization
+               epsilonformula = ~ brt + year-1, # Extinction
+               pformula = ~ 1, # Detection
                data = simUMF)
   ?colext
   m1@projected.mean
@@ -150,9 +150,8 @@ for(ww in 1:length(Regions)) {
   E.det$Parameter='Detection'
   E.det$Year=nd$year
 
-  #Early results suggest that the change in habitat quality has effectively no effect on
-  #occupancy parameters. Keep in mind, however, this depends on the ranking of habitat quality.
-
+  #Early results suggest that the change in habitat quality has the opposite effect on
+  #occupancy parameters than expected.
   #Going to take a raw-data approach to this and see if I can agree with the notion that
   #transitions were not significantly associated with habitat parameters.
 

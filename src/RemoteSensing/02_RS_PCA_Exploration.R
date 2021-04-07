@@ -152,10 +152,12 @@ rs3=rs2
 for(i in 1:length(cols)) {
   response = rs2[,cols[i]] #Response variable
   predictor = rs2$julian #Julian date
+  year = rs2$year
   re = rs2$ss #random effect
-  mod=lmer(response ~ predictor + (1|re)) #model
+  mod=lmer(response ~ predictor   + (1|re)) #model + factor(year)-1
   #Correct for date effect. In this case, get the residuals, but normalize to the original mean.
-  y=response - predict(mod, newdata = data.frame(response=response, predictor=predictor, re=re)) + mean(response)
+  z=coef(mod)$re$predictor[1]
+  y = response - z*predictor
   #Store new values in rs3
   rs3[,cols[i]] = y
 }
@@ -164,6 +166,7 @@ par(mfrow=c(4,3))
 par(mar=c(2,2,0,0))
 for(i in 1:11) {
   plot(rs2[,cols[i]], rs3[,cols[i]])
+  abline(a=0, b=1)
 }
 
 write.csv(rs3, './data/processed/rs_annual_dateCorrected_2013-19.csv', row.names=F)

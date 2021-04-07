@@ -124,3 +124,29 @@ sum(y$random != y$best, na.rm=T) #129 station years changed, so this might actua
 write.csv(y, './data/processed/spatial_clusters.csv', row.names=F)
 
 
+#Merging spatial clusters that have low sample sizes to even out the training-testing
+#division. Looking to get ten final clusters.
+
+y=read.csv('./data/processed/spatial_clusters.csv', stringsAsFactors=F)
+
+y$mergedClusters = y$cluster
+n.clusters = length(unique(y$mergedCluster))
+
+while(n.clusters > 10) {
+  x = table(y$mergedClusters)
+  ID = names(x)[order(as.numeric(x))[1]] #smallest cluster
+  ID2 = names(x)[order(as.numeric(x))[2]] #second smallest cluster
+  newID = as.character(max(as.numeric(names(x)))+1)
+  y$mergedClusters[y$mergedClusters == ID] = newID
+  y$mergedClusters[y$mergedClusters == ID2] = newID
+  n.clusters = length(unique(y$mergedCluster))
+}
+
+y$mergedClusters = as.numeric(as.factor(y$mergedClusters))
+
+table(y$mergedClusters)
+
+write.csv(y, './data/processed/spatial_clusters.csv', row.names=F)
+
+plot(y$longit, y$latit, col=y$mergedClusters)
+
