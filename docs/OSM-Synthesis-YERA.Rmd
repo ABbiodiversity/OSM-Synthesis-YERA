@@ -1,7 +1,7 @@
 ---
 title: "Yellow Rail in Alberta's Oil Sands Region"
 author: "Richard Hedley, Marcus Becker, Erin Bayne"
-date: "September 6, 2019"
+date: "Updated: April 9, 2021"
 output:
   bookdown::html_document2:
     highlight: zenburn
@@ -41,9 +41,11 @@ library(raster)
 library(leaflet)
 library(leaflet.extras)
 library(RColorBrewer)
-library(crosstalk)
+library(crosstalk) # Special branch of GH crosstalk repo required (filter-select-default)
 #library(DT)
 library(grid)
+library(abmi.themes)
+library(purrr)
 
 # Load functions
 source(here("./src/osm-synthesis-yera-functions_2019_09_27.R"))
@@ -52,6 +54,8 @@ source(here("./src/osm-synthesis-yera-functions_2019_09_27.R"))
 knitr::opts_chunk$set(out.width='70%', fig.align = "center")
 
 select <- dplyr::select
+
+add_abmi_fonts()
 
 ```
 
@@ -284,7 +288,7 @@ Detection is the proportion of visits to a site where a species is detected. Rat
 
 Detection probability by regional subset is displayed in Figure \@ref(fig:detection-comb) below, followed by the full region (Figure \@ref(fig:detection-full)). The error bars represent 90% confidence intervals in the estimated detection parameter.  
 
-```{r detection-comb, include=TRUE, echo=FALSE, message=FALSE, warning=FALSE, eval=TRUE, out.width="100%", fig.cap="Estimated Yellow Rail detection probability in four regional subsets."}
+```{r detection-comb, include=TRUE, echo=FALSE, message=FALSE, warning=FALSE, eval=TRUE, out.width="90%", fig.cap="Estimated Yellow Rail detection probability in four regional subsets.", fig.height=6, fig.showtext=TRUE, dpi=1000}
 
 # Extract detection, colonization, and extinction information.
 df_output <- OUT %>%
@@ -305,11 +309,12 @@ df_output <- OUT %>%
                                     "Eastern McClelland Fen Mine",
                                     "Mineable Areas",
                                     "Non-Mineable Areas")),
-         Year = as.numeric(Year),
+         #Year = as.numeric(Year),
          lower = ifelse(upper - lower > 0.9, NA, lower),
          upper = ifelse(upper - lower > 0.9, NA, upper))
 
 plot1 <- df_output %>%
+  mutate(Year = as.numeric(as.character(Year))) %>%
   filter(Parameter == "Detection" & !region == "Full Region") %>%
   ggplot(aes(x = Year, y = Predicted)) +
   geom_point(aes(color = region), size = 3.5) + 
@@ -319,13 +324,13 @@ plot1 <- df_output %>%
   scale_y_continuous(breaks = seq(0, 1, 0.2), limits = c(0, 1)) +
   scale_x_continuous(breaks = seq(2013, 2019, 1)) +
   theme_bw() +
-  labs(x = "Year",
-       y = "Detection Probability",
+  labs(y = "Detection Probability",
        caption = "Number of sites: 71 (West), 140 (East), 226 (Mineable), 269 (Non-Mineable)") +
   guides(color = guide_legend(nrow = 2, byrow = TRUE)) +
-  theme(axis.title.x = element_text(size = 13, face = "bold"),
-        axis.text.x = element_text(size = 10, angle = 45, hjust = 1),
-        axis.title.y = element_text(size = 13, face = "bold"),
+  theme_abmi() +
+  theme(axis.title.x = element_blank(),
+        axis.text.x = element_text(size = 13, angle = 45, hjust = 1),
+        axis.title.y = element_text(size = 17, face = "bold"),
         axis.text.y = element_text(size = 10),
         legend.position = "bottom",
         legend.title = element_blank(),
@@ -333,7 +338,8 @@ plot1 <- df_output %>%
         strip.text.x = element_blank(),
         panel.spacing.x = unit(1, "lines"),
         panel.spacing.y = unit(1.75, "lines"),
-        plot.caption = element_text(face = "italic", size = 8, hjust = 0.5)) + 
+        plot.caption = element_text(face = "italic", size = 8, hjust = 0.5),
+        panel.grid.major.x = element_line()) + 
   facet_wrap(~ region, nrow = 2)
   
 plot1
@@ -343,9 +349,10 @@ plot1
 ```
 <br>
 
-``` {r detection-full, include=TRUE, echo=FALSE, message=FALSE, warning=FALSE, eval=TRUE, out.width="70%", fig.cap="Estimated Yellow Rail detection probability through the full study region."}
+``` {r detection-full, include=TRUE, echo=FALSE, message=FALSE, warning=FALSE, eval=TRUE, out.width="60%", fig.height=5, fig.cap="Estimated Yellow Rail detection probability through the full study region.", fig.showtext=TRUE, dpi=1000}
 
 plot2 <- df_output %>%
+  mutate(Year = as.numeric(as.character(Year))) %>%
   filter(Parameter == "Detection" & region == "Full Region") %>%
   ggplot(aes(x = Year, y = Predicted)) +
   geom_point(size = 5, aes(color = region)) +
@@ -356,17 +363,18 @@ plot2 <- df_output %>%
   scale_y_continuous(breaks = seq(0, 1, 0.2), limits = c(0, 1)) +
   scale_x_continuous(breaks = seq(2013, 2019, 1)) +
   theme_bw() +
-  labs(x = "Year",
-       y = "Detection Probability",
+  labs(y = "Detection Probability",
        caption = "Number of sites: 495") +
-  theme(axis.title.x = element_text(size = 16, face = "bold"),
-        axis.text.x = element_text(size = 14, angle = 45, hjust = 1),
-        axis.title.y = element_text(size = 17, face = "bold"),
-        axis.text.y = element_text(size = 14),
+  theme_abmi() +
+  theme(axis.title.x = element_blank(),
+        axis.text.x = element_text(size = 13, angle = 45, hjust = 1),
+        axis.title.y = element_text(size = 16, face = "bold"),
+        axis.text.y = element_text(size = 12),
         legend.position = "bottom",
         legend.title = element_blank(),
         legend.text = element_text(size = 15),
-        plot.caption = element_text(face = "italic", size = 10, hjust = 0.5))  
+        plot.caption = element_text(face = "italic", size = 10, hjust = 0.5),
+        panel.grid.major.x = element_line())  
   
 plot2
 
@@ -382,9 +390,10 @@ Changes in occurrence of a species can be driven by rates of both colonization a
 Predicted colonization and extinction parameters are displayed below for each regional subset (Figure \@ref(fig:ec-comb)), followed by the two parameters for a full regional model (Figure \@ref(fig:ec-full)). Error bars represent a 90% confidence interval in the estimated colonization and extinction parameters.
 
 <br>
-```{r ec-comb, include=TRUE, echo=FALSE, message=FALSE, warning=FALSE, eval=TRUE, out.width='100%', fig.cap="Local Yellow Rail colonization and extinction probabilities in four regional subsets."}
+```{r ec-comb, include=TRUE, echo=FALSE, message=FALSE, warning=FALSE, eval=TRUE, out.width='100%', fig.cap="Local Yellow Rail colonization and extinction probabilities in four regional subsets.", fig.showtext=TRUE, dpi=1000, fig.height=6}
 
 plot3 <- df_output %>%
+  mutate(Year = as.numeric(as.character(Year))) %>%
   filter((Parameter == "Colonization" | Parameter == "Extinction") & !region == "Full Region") %>%
   ggplot(aes(x = Year, y = Predicted)) +
   geom_point(aes(color = region), size = 3.5) + 
@@ -394,23 +403,23 @@ plot3 <- df_output %>%
   scale_y_continuous(breaks = seq(0, 1, 0.2), limits = c(0, 1)) +
   scale_x_continuous(breaks = seq(2013, 2018, 1)) +
   theme_bw() +
-  labs(x = "Year",
-       y = "Probability",
+  labs(y = "Probability",
        caption = "Number of sites: 71 (West), 140 (East), 226 (Mineable), 269 (Non-Mineable)") +
-  # guides(color = guide_legend(nrow = 2, byrow = TRUE)) +
-  theme(axis.title.x = element_text(size = 13, face = "bold"),
+  theme_abmi() +
+  theme(axis.title.x = element_blank(),
         axis.text.x = element_text(size = 9, angle = 45, hjust = 1),
-        axis.title.y = element_text(size = 13, face = "bold"),
+        axis.title.y = element_text(size = 15, face = "bold"),
         axis.text.y = element_text(size = 10),
         legend.position = "bottom",
         legend.title = element_blank(),
-        legend.text = element_text(size = 9),
+        legend.text = element_text(size = 8),
         strip.text.x = element_blank(),
         strip.text.y = element_text(size = 10, face = "bold"),
         strip.background = element_rect(fill = "white"),
         panel.spacing.x = unit(1, "lines"),
         panel.spacing.y = unit(1.75, "lines"),
-        plot.caption = element_text(face = "italic", size = 8, hjust = 0.5)) + 
+        plot.caption = element_text(face = "italic", size = 8, hjust = 0.5),
+        panel.grid.major.x = element_line()) + 
   facet_grid(Parameter ~ region)
 
 plot3
@@ -419,9 +428,10 @@ plot3
 
 ```
 <br>
-``` {r ec-full, include=TRUE, echo=FALSE, message=FALSE, warning=FALSE, eval=TRUE, out.width="65%", fig.cap="Local Yellow Rail colonization and extinction probability for the full study region."}
+``` {r ec-full, include=TRUE, echo=FALSE, message=FALSE, warning=FALSE, eval=TRUE, out.width="60%", fig.cap="Local Yellow Rail colonization and extinction probability for the full study region.", fig.showtext=TRUE, dpi=1000, fig.height=6}
 
 plot4 <- df_output %>%
+  mutate(Year = as.numeric(as.character(Year))) %>%
   filter((Parameter == "Colonization" | Parameter == "Extinction") & region == "Full Region") %>%
   ggplot(aes(x = Year, y = Predicted)) +
   geom_point(aes(color = region), size = 4) +
@@ -434,8 +444,9 @@ plot4 <- df_output %>%
   labs(x = "Year",
        y = "Probability",
        caption = "Number of sites: 495") +
+  theme_abmi() +
   theme(axis.text.x = element_text(size = 14, angle = 45, hjust = 1),
-        axis.title.x = element_text(size = 16, face = "bold"),
+        axis.title.x = element_blank(),
         axis.title.y = element_text(size = 16, face = "bold"),
         axis.text.y = element_text(size = 14),
         strip.text.x = element_blank(),
@@ -446,7 +457,8 @@ plot4 <- df_output %>%
         legend.text = element_text(size = 14),
         # panel.border = element_blank(),
         panel.spacing.y = unit(1.5, "lines"),
-        plot.caption = element_text(face = "italic", size = 10, hjust = 0.5)) +
+        plot.caption = element_text(face = "italic", size = 10, hjust = 0.5),
+        panel.grid.major.x = element_line()) +
   facet_grid(Parameter ~ region)
 
 plot4
@@ -463,7 +475,7 @@ The high rates of extinction and colonization show that the local dynamics of th
 Occupancy, adjusted for imperfect detection, is estimated for each of the four regional subsets between 2013 and 2018, and the results are displayed in Figure \@ref(fig:occ-comb). Occupancy is also estimated for the full region and displayed in Figure \@ref(fig:occ-full). 
 
 <br>
-``` {r occ-comb, include=TRUE, echo=FALSE, message=FALSE, warning=FALSE, eval=TRUE, out.width="100%", fig.cap="Estimated Yellow Rail occupancy in four regional subsets."}
+``` {r occ-comb, include=TRUE, echo=FALSE, message=FALSE, warning=FALSE, eval=TRUE, out.width="90%", fig.cap="Estimated Yellow Rail occupancy in four regional subsets.", fig.showtext=TRUE, dpi=1000, fig.height=6}
 
 df_output_occ <- OUT %>%
   map(~ data.frame(.x[1])) %>%
@@ -496,7 +508,7 @@ plot5 <- df_output_occ %>%
   ggplot(mapping = aes(x = year, y = occupancy)) +
   geom_point(mapping = aes(color = region), size = 3.5) +
   geom_line(mapping = aes(color = region)) +
-  scale_y_continuous(breaks = seq(0, 0.6, 0.2), limits = c(0, 0.7)) +
+  scale_y_continuous(breaks = seq(0, 1, 0.2), limits = c(0, 1)) +
   scale_x_continuous(breaks = seq(2013, 2019, 1)) +
   theme_bw() +
   labs(x = "Year",
@@ -504,17 +516,19 @@ plot5 <- df_output_occ %>%
        # title = "Occupancy rates in four regions of the Lower Athabasca",
        caption = "Number of sites: 71 (West), 140 (East), 226 (Mineable), 269 (Non-Mineable)") +
   guides(color = guide_legend(nrow = 2, byrow = TRUE)) +
-  theme(axis.title.x = element_text(size = 13, face = "bold"),
-        axis.text.x = element_text(size = 11, angle = 45, hjust = 1),
-        axis.title.y = element_text(size = 13, face = "bold"),
+  theme_abmi() +
+  theme(axis.title.x = element_blank(),
+        axis.text.x = element_text(size = 10, angle = 45, hjust = 1),
+        axis.title.y = element_text(size = 17, face = "bold"),
         axis.text.y = element_text(size = 10),
         legend.position = "bottom",
         legend.title = element_blank(),
-        legend.text = element_text(size = 10),
+        legend.text = element_text(size = 9),
         strip.text.x = element_blank(),
         panel.spacing.x = unit(1, "lines"),
         panel.spacing.y = unit(1.75, "lines"),
-        plot.caption = element_text(face = "italic", size = 8, hjust = 0.5)) +
+        plot.caption = element_text(face = "italic", size = 8, hjust = 0.5),
+        panel.grid.major.x = element_line()) +
   facet_wrap(~ region, nrow = 2) 
 
 plot5
@@ -524,29 +538,31 @@ plot5
 ```
 <br>
 
-```{r occ-full, include=TRUE, echo=FALSE, message=FALSE, warning=FALSE, eval=TRUE, out.width="65%", fig.cap="Estimated Yellow Rail occupancy for the full study region."}
+```{r occ-full, include=TRUE, echo=FALSE, message=FALSE, warning=FALSE, eval=TRUE, out.width="65%", fig.cap="Estimated Yellow Rail occupancy for the full study region.", fig.showtext=TRUE, dpi=1000}
 
 plot6 <- df_output_occ %>%
   filter(status == "occupied",
          region == "Full Region") %>%
   mutate(year = as.numeric(year)) %>%
   ggplot(mapping = aes(x = year, y = occupancy)) +
-  geom_point(size = 4, aes(color = region)) +
+  geom_point(size = 5, aes(color = region)) +
   geom_line(aes(color = region)) +
   scale_color_manual(values = "cornflowerblue") +
-  scale_y_continuous(breaks = seq(0, 0.4, 0.1), limits = c(0, 0.4)) +
+  scale_y_continuous(breaks = seq(0, 0.5, 0.1), limits = c(0, 0.5)) +
   scale_x_continuous(breaks = seq(2013, 2019, 1)) +
   theme_bw() +
   labs(x = "Year",
        y = "Proportion of Sites Occupied",
        caption = "Number of sites: 495") +
-  theme(axis.title.x = element_text(size = 16, face = "bold"),
-        axis.text.x = element_text(size = 14, angle = 45, hjust = 1),
+  theme_abmi() +
+  theme(axis.title.x = element_blank(),
+        axis.text.x = element_text(size = 12, angle = 45, hjust = 1),
         axis.title.y = element_text(size = 16, face = "bold"),
         axis.text.y = element_text(size = 12),
         legend.position = "bottom",
         legend.title = element_blank(),
         legend.text = element_text(size = 15),
+        panel.grid.major.x = element_line(),
         plot.caption = element_text(face = "italic", size = 10, hjust = 0.5))
 
 plot6
@@ -665,9 +681,14 @@ pal1 <- colorNumeric(palette = pal_rev,
                          domain = values(ras_prefhab), 
                          na.color = "transparent")
 
+ras_prefhab <- raster(here("./data/base/spatial/yera_prefhab_250m.tif"))
+
+# EPSG:3785
+crs(ras_prefhab) = CRS("+proj=merc +lon_0=0 +k=1 +x_0=0 +y_0=0 +a=6378137 +b=6378137 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs")
+
 # Leaflet map
 map_prefhab <- sf_osr %>%
-  st_transform("+init=epsg:4326") %>%
+  st_transform(4326) %>%
   leaflet() %>%
   addTiles() %>%
   addProviderTiles("Stamen.Terrain") %>%
@@ -701,7 +722,7 @@ map_prefhab <- sf_osr %>%
 
   # Add raster layer
   addRasterImage(ras_prefhab, colors = pal1, opacity = 1,
-                 group = "Predicted Habitat Suitability") %>%
+                 group = "Predicted Habitat Suitability", maxBytes = 5 * 1024 * 1024) %>%
   
   # Add legend
   addLegend(pal = pal1, values = values(ras_prefhab), opacity = 1,  
@@ -724,7 +745,7 @@ map_prefhab
 The distribution of habitat classes in each of seven mining lease sites is displayed in Figure \@ref(fig:habitat-plots) below. Jackpine Mine Phase 2 contains the most high quality (classes 7 & 8) habitat within its boundaries, primarily in the northern portion of the lease where it overlaps with the Eastern McClelland Fen.
 
 <br>
-```{r habitat-plots, include=TRUE, echo=FALSE, message=FALSE, warning=FALSE, eval=TRUE, out.width="100%", fig.cap="Distribution of habitat classes in seven mining lease sites near McClelland Lake Fen."}
+```{r habitat-plots, include=TRUE, echo=FALSE, message=FALSE, warning=FALSE, eval=TRUE, out.width="100%", fig.cap="Distribution of habitat classes in seven mining lease sites near McClelland Lake Fen.", dpi=1000}
 
 df_lease <- st_set_geometry(sf_lease, NULL)
 
@@ -795,7 +816,77 @@ map_pred
 ```
 <br>
 
-The potential also exists for remote sensing techniques to help quantify water depth at survey site locations. As mentioned previously, water depth measurements were taken by field staff during the Yellow Rail monitoring program; however, in some cases, practical sampling difficulties has rendered parts of this dataset incomplete. Supplementing this information with radar data from satellites could potentially improve habitat modeling capabilities (e.g. Jiang et al., 2015).   
+The potential also exists for remote sensing techniques to help quantify water depth at survey site locations. As mentioned previously, water depth measurements were taken by field staff during the Yellow Rail monitoring program; however, in some cases, practical sampling difficulties has rendered parts of this dataset incomplete. Supplementing this information with radar data from satellites could potentially improve habitat modeling capabilities (e.g. Jiang et al., 2015).
+
+Based on the very specific nature of YERA habitat, it is hypothesized that polarimetric Synthetic Aperture Radar (SAR) could also be very powerful for characterizing, mapping, and monitoring these wetland habitats. SAR is able to detect complex water vegetation interactions and also measure wetland vegetation structure. In this work, polarimetric SAR from RADARSAT-2 and optical data from Landsat were used to detect probable YERA wetland habitat and detect changes in habitat from year-to-year. It was found that SAR was much more important than optical data for mapping probable YERA habitat as it is able to detect flooded vegetation and the specific graminoid vegetation structure. These parameters from SAR were able to effectively characterize YERA habitat which seems to be consistent with field descriptions of YERA habitat (Figure \@ref(fig:eo)). Using these SAR inputs plus a few optical inputs from Landsat showed good prediction of YERA occupancy probability across wetland areas around the McLelland wetland complex (Figure \@ref(fig:eo2)). Trends in the SAR data proved to be somewhat inconclusive as intra-year variability these wetland habitats may be greater than the year-to-year trends. Overall, polarimetric SAR can be a powerful tool for monitoring hydrodynamic/structural changes in wetland habitat and thus monitoring of species distribution patterns such as YEAR.
+
+```{r eo, include=TRUE, echo=FALSE, message=FALSE, warning=FALSE, eval=TRUE, out.width="90%", fig.cap="Distribution of habitat classes in seven mining lease sites near McClelland Lake Fen.", dpi=1000, fig.height=8, fig.showtext=TRUE}
+
+b3_l8 <- read_csv(here("./data/processed/eo_modeling/B3_L8.csv")) %>%
+  mutate(variable = "B3_L8") %>%
+  select(variable, value = B3_L8, occ_prob = y)
+
+b6_l8 <- read_csv(here("./data/processed/eo_modeling/B6_L8.csv")) %>%
+  mutate(variable = "B6_L8") %>%
+  select(variable, value = B6_L8, occ_prob = y)
+
+crosspolratio <- read_csv(here("./data/processed/eo_modeling/CrossPolRatio.csv")) %>%
+  mutate(variable = "CrossPolRatio") %>%
+  select(variable, value = CrossPolRatio, occ_prob = y)
+
+doublebounce_fd <- read_csv(here("./data/processed/eo_modeling/DoubleBounce_FD.csv")) %>%
+  mutate(variable = "DoubleBounce_FD") %>%
+  select(variable, value = DoubleBounce_FD, occ_prob = y)
+
+roughsurface_fd <- read_csv(here("./data/processed/eo_modeling/RoughSurface_FD.csv")) %>%
+  mutate(variable = "RoughSurface_FD") %>%
+  select(variable, value = RoughSurface_FD, occ_prob = y)
+
+volumescattering_fd <- read_csv(here("./data/processed/eo_modeling/VolumeScattering_FD.csv")) %>%
+  mutate(variable = "VolumeScattering_FD") %>%
+  select(variable, value = VolumeScattering_FD, occ_prob = y)
+
+eo_modeling <- bind_rows(b3_l8, b6_l8, crosspolratio, doublebounce_fd, roughsurface_fd, volumescattering_fd)
+
+plot8 <- eo_modeling %>%
+  ggplot(aes(x = value, y = occ_prob)) +
+  geom_smooth(method = "loess", aes(color = variable)) +
+  geom_point(size = 0.6) +
+  facet_wrap(~ variable, nrow = 3, scales = "free") +
+  theme_abmi() +
+  labs(y = "Occupancy Probability", x = "Optical Input Value") +
+  theme(axis.title.y = element_text(size = 17, face = "bold"),
+        axis.title.x = element_text(size = 15),
+        strip.text = element_text(size = 13),
+        legend.position = "none")
+
+plot8
+
+```
+
+
+```{r eo2, include=TRUE, echo=FALSE, message=FALSE, warning=FALSE, eval=TRUE, out.width="80%", fig.cap="Hexagonal YERA occupancy probability for the study area. Yellows represent high YERA occupancy probability and darker colours represent low probabilities. Insets on right zoom in on areas with suitable YEAR habitat (center and graminoid areas of wetland habitat) and poor habitat (edge/treed wetland)."}
+
+knitr::include_graphics(here("./docs/pics/eo2.png"))
+
+```
+
+
+## Understanding temporal dynamics using Landsat Imagery
+
+In this analysis, we explored whether Landsat imagery could help explain the inter-annual variation in Yellow Rail occurrence, which can be highly unpredictable from year to year. First, we extracted Landsat variables from 468 stations and used them to assess habitat quality at each station in each year. Then, we assessed whether Yellow Rails colonized when conditions improved relative to the previous year, and left when conditions worsened relative to the previous year. This hypothesis is based on anecdotes in the literature that Yellow Rails require conditions to be “just right” in terms of water levels and other habitat features, leading to large fluctuations across years.
+
+Here we will only briefly summarize the methods and results, but we point the reader to the report prepared by R.Hedley (2021) for additional details and analyses. To model habitat quality, we extracted eleven Landsat 8 variables, and used boosted regression trees to classify the probability of occupancy at a location in any given year. Via this procedure, a location with a high predicted occupancy probability (scored from 0 to 1) is expected to be high quality in that year, while a location with a low score was expected to be poor quality, and the scores of a station fluctuated from year to year along with changes in the Landsat imagery. We predicted that if Yellow Rails were tracking habitat conditions, that “colonization events” should occur when conditions improved relative to the previous year, and “extinction events” should occur when conditions declined. 
+
+A key result is shown in \@ref(fig:landsat), which shows that neither colonizations nor extinctions were associated in any consistent way with the magnitude of the change in habitat quality score. In other words, the birds did not appear to be tracking habitat conditions.
+
+```{r landsat, include=TRUE, echo=FALSE, message=FALSE, warning=FALSE, eval=TRUE, out.width="50%", fig.cap="Water depth in the Unmineable region."}
+
+knitr::include_graphics(here("./docs/pics/landsat.jpg"))
+
+```
+
+A few limitations are worth noting. First of all, the Landsat 8 imagery itself may not be accurately capturing relevant on-the-ground conditions, such as water levels. We strongly suspect that this is the case, since the image acquisition dates varied across years, and our method for correcting for image acquisition date was thought to be imperfect. Second, our boosted regression tree models may not have captured habitat quality from the perspective of the rails. Finally, it is possible that the occurrence of rails might be largely random, or at least caused by factors not visible using remote sensing. Although there does appear to be a degree of unpredictability to the inter-annual dynamics of Yellow Rails, we suspect that this latter conclusion is premature, and that there are other factors at play. In our view the most likely explanation is the first one: that the relevant habitat features were simply not captured by Landsat imagery. In the next section, we compare the performance of Landsat imagery against Radarsat-2, to explore whether it may be more suitable for Yellow Rail habitat modeling.
 
 ## Regional Population Estimates
 

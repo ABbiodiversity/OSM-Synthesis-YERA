@@ -180,13 +180,13 @@ Preliminary work has been done to include water measurements in a model of Yello
 
 [^1]: Note that a substantial amount of data cleaning is required, with small number of measurements collected for some regions in some years, and 2017 data that has yet to be digitally transcribed from paper recordings in the field.
 
-```{r water-depth-mcclelland, include=TRUE, echo=FALSE, message=FALSE, warning=FALSE, eval=TRUE, out.width="50%", fig.show="hold", fig.cap="Water depth in the Western (left) and Eastern (right) McClelland Fen Mine, by year."}
+```{r water-depth-mcclelland, include=FALSE, echo=FALSE, message=FALSE, warning=FALSE, eval=FALSE, out.width="50%", fig.show="hold", fig.cap="Water depth in the Western (left) and Eastern (right) McClelland Fen Mine, by year."}
 
 include_graphics(c(here("./results/WESTWaterDepthByYear.jpeg"), here("./results/EASTWaterDepthByYear.jpeg")))
 
 ```
 
-```{r water-depth-unmineable, include=TRUE, echo=FALSE, message=FALSE, warning=FALSE, eval=TRUE, out.width="50%", fig.cap="Water depth in the unmineable region."}
+```{r water-depth-unmineable, include=FALSE, echo=FALSE, message=FALSE, warning=FALSE, eval=FALSE, out.width="50%", fig.cap="Water depth in the unmineable region."}
 
 include_graphics(here("./results/unmineableWaterDepthByYear.jpeg"))
 
