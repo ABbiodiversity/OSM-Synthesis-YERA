@@ -15,7 +15,7 @@ fontsize: 11pt
 
 header-includes:
     - \usepackage{float}
-    - \usepackage[bottom]{footmisc}
+    #- \usepackage[bottom]{footmisc}
 ---
 
 ```{r setup, include=TRUE, echo=FALSE, message=FALSE, warning=FALSE, eval=TRUE}

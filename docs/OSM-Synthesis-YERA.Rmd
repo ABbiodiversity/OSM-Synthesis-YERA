@@ -1,7 +1,7 @@
 ---
 title: "Yellow Rail in Alberta's Oil Sands Region"
 author: "Richard Hedley, Marcus Becker, Erin Bayne"
-date: "Updated: April 9, 2021"
+date: "Updated: February 4, 2022"
 output:
   bookdown::html_document2:
     highlight: zenburn
@@ -34,6 +34,7 @@ urlcolor: blue
 
 # Load libraries
 library(tidyverse)
+library(crosstalk) # Special branch of GH crosstalk repo required (filter-select-default)
 library(knitr)
 library(here)
 library(sf)
@@ -41,7 +42,6 @@ library(raster)
 library(leaflet)
 library(leaflet.extras)
 library(RColorBrewer)
-library(crosstalk) # Special branch of GH crosstalk repo required (filter-select-default)
 #library(DT)
 library(grid)
 library(abmi.themes)
@@ -84,10 +84,10 @@ sf_lease <- st_read(here("./data/base/spatial/AB_lease-sites.shp"), quiet = TRUE
 # Site metadata
 df_meta <- read_csv(here("./data/lookup/yera_ss-meta_2013-18.csv"))
 # YERA occupancy
-df_occupy <- read_csv(here("./data/processed/yera_occupy_2013-19_new.csv"))
+df_occupy <- read_csv(here("./data/processed/yera_occupy_2013-21_new.csv"))
 
 # Occupancy modeling output
-load(here("./results/occupancy/MultiYearOccupancyOutput_2013-19.RData"))
+load(here("./results/occupancy/MultiYearOccupancyOutput_2013-21.RData"))
 
 ```
 <br>
@@ -322,7 +322,8 @@ plot1 <- df_output %>%
   geom_errorbar(aes(y = Predicted, ymin = lower, ymax = upper, color = region), 
                 width = 0.15) +
   scale_y_continuous(breaks = seq(0, 1, 0.2), limits = c(0, 1)) +
-  scale_x_continuous(breaks = seq(2013, 2019, 1)) +
+  scale_x_continuous(breaks = seq(2013, 2021, 1)) +
+  scale_color_brewer(palette = "Dark2") +
   theme_bw() +
   labs(y = "Detection Probability",
        caption = "Number of sites: 71 (West), 140 (East), 226 (Mineable), 269 (Non-Mineable)") +
@@ -358,10 +359,10 @@ plot2 <- df_output %>%
   geom_point(size = 5, aes(color = region)) +
   geom_line(aes(color = region)) +
   geom_errorbar(aes(y = Predicted, ymin = lower, ymax = upper), 
-                width = 0.15, color = "cornflowerblue") +
-  scale_color_manual(values = "cornflowerblue") +
+                width = 0.15, color = "steelblue") +
+  scale_color_manual(values = "steelblue") +
   scale_y_continuous(breaks = seq(0, 1, 0.2), limits = c(0, 1)) +
-  scale_x_continuous(breaks = seq(2013, 2019, 1)) +
+  scale_x_continuous(breaks = seq(2013, 2021, 1)) +
   theme_bw() +
   labs(y = "Detection Probability",
        caption = "Number of sites: 495") +
@@ -401,7 +402,8 @@ plot3 <- df_output %>%
   geom_errorbar(aes(y = Predicted, ymin = lower, ymax = upper, color = region), 
                 width = 0.15) +
   scale_y_continuous(breaks = seq(0, 1, 0.2), limits = c(0, 1)) +
-  scale_x_continuous(breaks = seq(2013, 2018, 1)) +
+  scale_x_continuous(breaks = seq(2013, 2019, 1)) +
+  scale_color_brewer(palette = "Dark2") +
   theme_bw() +
   labs(y = "Probability",
        caption = "Number of sites: 71 (West), 140 (East), 226 (Mineable), 269 (Non-Mineable)") +
@@ -438,7 +440,7 @@ plot4 <- df_output %>%
   geom_errorbar(aes(y = Predicted, ymin = lower, ymax = upper, color = region), 
                 width = 0.15) +
   geom_line(aes(color = region)) +
-  scale_color_manual(values = "cornflowerblue") +
+  scale_color_manual(values = "steelblue") +
   scale_y_continuous(breaks = seq(0, 0.8, 0.2), limits = c(0, 0.85)) +
   theme_bw() +
   labs(x = "Year",
@@ -479,8 +481,8 @@ Occupancy, adjusted for imperfect detection, is estimated for each of the four r
 
 df_output_occ <- OUT %>%
   map(~ data.frame(.x[1])) %>%
-  map_dfr(~ rownames_to_column(.x[1:7], var = "status"), .id = "region") %>%
-  gather(key = "year", value = "occupancy", Occupancy.1:Occupancy.7) %>%
+  map_dfr(~ rownames_to_column(.x[1:8], var = "status"), .id = "region") %>%
+  gather(key = "year", value = "occupancy", Occupancy.1:Occupancy.8) %>%
   mutate(year = case_when(
     year == "Occupancy.1" ~ "2013",
     year == "Occupancy.2" ~ "2014",
@@ -488,7 +490,8 @@ df_output_occ <- OUT %>%
     year == "Occupancy.4" ~ "2016",
     year == "Occupancy.5" ~ "2017",
     year == "Occupancy.6" ~ "2018",
-    year == "Occupancy.7" ~ "2019"),
+    year == "Occupancy.7" ~ "2019",
+    year == "Occupancy.8" ~ "2021"),
          region = case_when(
     region == "East" ~ "Eastern McClelland Fen Mine",
     region == "West" ~ "Western McClelland Fen Mine",
@@ -509,7 +512,8 @@ plot5 <- df_output_occ %>%
   geom_point(mapping = aes(color = region), size = 3.5) +
   geom_line(mapping = aes(color = region)) +
   scale_y_continuous(breaks = seq(0, 1, 0.2), limits = c(0, 1)) +
-  scale_x_continuous(breaks = seq(2013, 2019, 1)) +
+  scale_x_continuous(breaks = seq(2013, 2021, 1)) +
+  scale_color_brewer(palette = "Dark2") +
   theme_bw() +
   labs(x = "Year",
        y = "Proportion of Sites Occupied",
@@ -547,9 +551,9 @@ plot6 <- df_output_occ %>%
   ggplot(mapping = aes(x = year, y = occupancy)) +
   geom_point(size = 5, aes(color = region)) +
   geom_line(aes(color = region)) +
-  scale_color_manual(values = "cornflowerblue") +
+  scale_color_manual(values = "steelblue") +
   scale_y_continuous(breaks = seq(0, 0.5, 0.1), limits = c(0, 0.5)) +
-  scale_x_continuous(breaks = seq(2013, 2019, 1)) +
+  scale_x_continuous(breaks = seq(2013, 2021, 1)) +
   theme_bw() +
   labs(x = "Year",
        y = "Proportion of Sites Occupied",
@@ -567,7 +571,7 @@ plot6 <- df_output_occ %>%
 
 plot6
 
-ggsave(here("./docs/pics/occ-full.png"))
+#ggsave(here("./docs/pics/occ-full.png"))
 
 ```
 <br>
