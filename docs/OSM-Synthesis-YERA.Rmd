@@ -87,7 +87,7 @@ df_meta <- read_csv(here("./data/lookup/yera_ss-meta_2013-18.csv"))
 df_occupy <- read_csv(here("./data/processed/yera_occupy_2013-21_new.csv"))
 
 # Occupancy modeling output
-load(here("./results/occupancy/MultiYearOccupancyOutput_2013-21.RData"))
+load(here("./results/occupancy/MultiYearOccupancyOutput_2013-21_eb.RData"))
 
 ```
 <br>
@@ -441,7 +441,7 @@ plot4 <- df_output %>%
                 width = 0.15) +
   geom_line(aes(color = region)) +
   scale_color_manual(values = "steelblue") +
-  scale_y_continuous(breaks = seq(0, 0.8, 0.2), limits = c(0, 0.85)) +
+  scale_y_continuous(breaks = seq(0, 1, 0.2), limits = c(0, 1.05)) +
   theme_bw() +
   labs(x = "Year",
        y = "Probability",
@@ -474,7 +474,7 @@ The high rates of extinction and colonization show that the local dynamics of th
 
 ### Occupancy
 
-Occupancy, adjusted for imperfect detection, is estimated for each of the four regional subsets between 2013 and 2018, and the results are displayed in Figure \@ref(fig:occ-comb). Occupancy is also estimated for the full region and displayed in Figure \@ref(fig:occ-full). 
+Occupancy, adjusted for imperfect detection, is estimated for each of the four regional subsets between 2013 and 2021, and the results are displayed in Figure \@ref(fig:occ-comb). Occupancy is also estimated for the full region and displayed in Figure \@ref(fig:occ-full). 
 
 <br>
 ``` {r occ-comb, include=TRUE, echo=FALSE, message=FALSE, warning=FALSE, eval=TRUE, out.width="90%", fig.cap="Estimated Yellow Rail occupancy in four regional subsets.", fig.showtext=TRUE, dpi=1000, fig.height=6}

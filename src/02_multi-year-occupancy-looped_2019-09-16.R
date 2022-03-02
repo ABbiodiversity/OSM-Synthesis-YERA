@@ -17,9 +17,30 @@ library(unmarked)
 
 # Import data
 
-Data=read.table("./data/processed/yera_occupy_2013-19_new.csv", sep=',', header=T, stringsAsFactors=F)
+Data_og=read.table("./data/processed/yera_occupy_2013-21_new.csv", sep=',', header=T, stringsAsFactors=F)
 
-Doy=read.table("./data/processed/yera_doy_2013-19_new.csv", sep=',', header=T, stringsAsFactors=F)
+Data = read_csv("./data/processed/yera_occupy_2013-21_new_eb.csv")
+
+# Need to expand out all of the options in Data (not included by Erin)
+missing_combos <- Data %>%
+  select(embSS, region, wetland) %>%
+  distinct() %>%
+  crossing(sample = 1:4, year = c(2013:2019, 2021)) %>%
+  anti_join(Data, by = c("embSS", "region", "wetland", "sample", "year")) %>%
+  mutate(occupied = NA)
+
+# Join together (well, bind)
+Data <- Data %>%
+  select(-`richardSS(mess)`) %>%
+  bind_rows(missing_combos) %>%
+  arrange(embSS, year, sample, region, wetland) %>%
+  # Weird thing. Some duplicated rows, because wetland field wasn't filled out properly. Oh well.
+  group_by(embSS, year, sample) %>%
+  add_count() %>%
+  filter(!(n > 1 & is.na(wetland))) %>%
+  select(-n)
+
+Doy = read.table("./data/processed/yera_doy_2013-19_new.csv", sep=',', header=T, stringsAsFactors=F)
 
 #-------------------------------------------------------------------------------
 
@@ -47,7 +68,7 @@ for(ww in 1:length(Regions)) {
   if(R=='West') {Occ=Data[Data$region == 'west',]}
   if(R=='East') {Occ=Data[Data$region == 'east',]}
 
-  Stations=sort(unique(Occ$ss)) # Stations
+  Stations=sort(unique(Occ$embSS)) # Stations
 
   M <- length(Stations) # Number of stations
 
@@ -72,7 +93,7 @@ for(ww in 1:length(Regions)) {
       V=j
       for(k in 1:Y) {
         CurrentYear=Years[k]
-        Obs=Occ$occupied[Occ$ss==S & Occ$sample==V & Occ$year==CurrentYear]
+        Obs=Occ$occupied[Occ$embSS==S & Occ$sample==V & Occ$year==CurrentYear]
         y[i,j,k]=Obs
       }
     }
@@ -154,6 +175,6 @@ for(ww in 1:length(Regions)) {
 
 # Save outputs
 
-save(OUT, file='./results/occupancy/MultiYearOccupancyOutput_2013-19.RData')
+save(OUT, file='./results/occupancy/MultiYearOccupancyOutput_2013-21_eb.RData')
 
 # save(MODELS, file='MultiYearOccupancyModels.RData')
