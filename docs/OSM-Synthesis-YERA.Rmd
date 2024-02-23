@@ -84,7 +84,8 @@ sf_lease <- st_read(here("./data/base/spatial/AB_lease-sites.shp"), quiet = TRUE
 # Site metadata
 df_meta <- read_csv(here("./data/lookup/yera_ss-meta_2013-18.csv"))
 # YERA occupancy
-df_occupy <- read_csv(here("./data/processed/yera_occupy_2013-21_new_2.csv"))
+df_occupy <- read_csv(here("./data/processed/yera_occupy_2013-21_new_2.csv")) |>
+  mutate(ss = str_replace_all(location, "-", ":"))
 
 # Occupancy modeling output
 load(here("./results/occupancy/MultiYearOccupancyOutput_2013-21_2022-04-04.RData"))
@@ -227,12 +228,12 @@ sf_osr %>%
                options = leafletOptions(pane = "Lease Boundaries")) %>%
   
   # Lease labels
-  addLabelOnlyMarkers(data = df_centers, label = ~Name, 
-                      group = "Nearby Oil Sands Lease Sites",
-                      labelOptions = labelOptions(
-                        noHide = TRUE, textOnly = FALSE, textsize = "10px",
-                        opacity = 1, offset = c(0,0)
-                      )) %>%
+  #addLabelOnlyMarkers(data = df_centers, label = ~Name, 
+  #                    group = "Nearby Oil Sands Lease Sites",
+  #                    labelOptions = labelOptions(
+  #                      noHide = TRUE, textOnly = FALSE, textsize = "10px",
+  #                      opacity = 1, offset = c(0,0)
+  #                    )) %>%
         
   # Add markers for survey stations
   addCircleMarkers(data = shared_ss, color = ~pal1(yera_occupied),
@@ -309,12 +310,12 @@ sf_osr %>%
                options = leafletOptions(pane = "Lease Boundaries")) %>%
   
   # Lease labels
-  addLabelOnlyMarkers(data = df_centers, label = ~Name, 
-                      group = "Nearby Oil Sands Lease Sites",
-                      labelOptions = labelOptions(
-                        noHide = TRUE, textOnly = FALSE, textsize = "10px",
-                        opacity = 1, offset = c(0,0)
-                      )) %>%
+  #addLabelOnlyMarkers(data = df_centers, label = ~Name, 
+  #                    group = "Nearby Oil Sands Lease Sites",
+  #                    labelOptions = labelOptions(
+  #                      noHide = TRUE, textOnly = FALSE, textsize = "10px",
+  #                      opacity = 1, offset = c(0,0)
+  #                    )) %>%
         
   # Add markers for survey stations
   addCircleMarkers(data = shared_ss, color = ~pal1(yera_occupied),
@@ -753,7 +754,7 @@ Results from Yellow Rail site surveys between 2012-2017 were used to produce a m
 + Alberta Biodiversity Monitoring Institute (ABMI) 2010 Landcover Classification. This product is an Alberta-wide ('wall-to-wall') provincial land cover based on digital classification of Landsat satellite imagery and enhanced using GIS datasets obtained from the Government of Alberta. It consists of 15 classes, including water, shrubland, grassland, agriculture, exposed land, developed land, and various forest types.
 + Ducks Unlimited Enhanced Wetland Classification. This is a western boreal product based on a combination of Landsat and Radarsat. Using object-based supervised classification methods this product identifies 19 boreal plans wetland classes and 10 other land cover classes.
 + Landcover Classification of Canada. Based on MODIS satellite observations from 2005, the product identifies 39 classes of landcover. 
-+ Alberta Vegetation Inventory. AVI is a photo-based digital inventory developed to identify the type, extent and conditions of vegetation. Human observers digitize polygons into a series of forest type classes that include various non-forested categories. Environment and Climate Change Canada (Edmonton) created a classification system from the AVI that converted the underlying attributes into 37 unique classes of which nine represent wetland types.
++ Alberta Vegetation Inventory. AVI is a photo-based digital inventory developed to identify the type, extent and conditions of vegetation. Human observers digitize polygons into a series of forest type classes that include various non-forested categories. We followed a system created by Environment and Climate Change Canada (Edmonton) to convert the underlying attributes into 37 unique classes of which nine represent wetland types.
 
 Each of the four products were either available in, or converted to, a 30-m raster. We used a resource selection function approach based on the logistic discriminant approach (Manly et al. 2002) to determine whether each land-cover class within four distinct mapping products was avoided, neutral, or selected.  A land-cover class that was avoided had a beta coefficient that was negative and a 95% confidence interval that did not include zero. A land-cover class that had a beta coefficient that was positive and 95% confidence interval that did not include zero was selected. All other land-cover classes were declared neutral.  For each mapping product, we then ranked avoided habitat as 0, neutral as 1, and selected as 2. We mapped the predicted selection class for each land-cover class in each mapping product. To combine these four maps into a composite map (the fusion map), we took the sum of the four RSF maps for each 30-m cell across the region. An 8 was a spatial location where all products agreed that Yellow Rail selected that area while a 0 was a spatial location where all products agreed was avoided. Mapped values between 1 and 7 indicate the degree of consistency and the direction of selection with intermediate values being spatial locations where there was more uncertainty between mapping products in terms of whether the land-cover was selected or avoided. 
 
@@ -802,16 +803,16 @@ map_prefhab <- sf_osr %>%
                options = leafletOptions(pane = "Lease Boundaries")) %>%
   
   # Lease labels
-  addLabelOnlyMarkers(data = df_centers, label = ~Name, 
-                      group = "Nearby Oil Sands Lease Sites",
-                      labelOptions = labelOptions(
-                        noHide = TRUE, textOnly = FALSE, textsize = "10px",
-                        opacity = 1, offset = c(0,0)
-                      )) %>%
+  #addLabelOnlyMarkers(data = df_centers, label = ~Name, 
+  #                    group = "Nearby Oil Sands Lease Sites",
+  #                    labelOptions = labelOptions(
+  #                      noHide = TRUE, textOnly = FALSE, textsize = "10px",
+  #                      opacity = 1, offset = c(0,0)
+  #                    )) %>%
 
   # Add raster layer
   addRasterImage(ras_prefhab, colors = pal1, opacity = 1,
-                 group = "Predicted Habitat Suitability", maxBytes = 5 * 1024 * 1024) %>%
+                 group = "Predicted Habitat Suitability", maxBytes = 6 * 1024 * 1024) %>%
   
   # Add legend
   addLegend(pal = pal1, values = values(ras_prefhab), opacity = 1,  
