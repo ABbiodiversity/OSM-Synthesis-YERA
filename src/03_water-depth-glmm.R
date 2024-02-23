@@ -1,6 +1,6 @@
 library(lubridate)
 library(lme4)
-source('./data/base/AccessToWildtrax.R')
+source('./AccessToWildtrax.R')
 
 
 long=read.csv('./data/processed/LongWaterMeasurements.csv',stringsAsFactor=F)
